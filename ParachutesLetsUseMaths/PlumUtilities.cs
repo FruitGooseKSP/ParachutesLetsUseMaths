@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ParachutesLetsUseMaths
 {
-    class PlumUtilities
+    public class PlumUtilities
     {
 
 

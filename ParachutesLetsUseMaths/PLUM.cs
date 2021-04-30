@@ -10,6 +10,49 @@ namespace ParachutesLetsUseMaths
     public class PLUM : MonoBehaviour
     {
 
+        public static PLUM Instance;
+        public static GUIElements guiPlum = new GUIElements();
+        public PlumUtilities utils;
+
+
+
+
+        public void Start()
+        {
+            if (HighLogic.LoadedSceneIsEditor)
+            {
+                Instance = this;
+                utils = new PlumUtilities();
+
+
+
+
+
+
+
+
+
+
+
+
+
+            }
+            else return;
+
+
+
+
+
+        }
+
+        public void Update()
+        {
+
+
+
+
+
+        }
 
 
 
