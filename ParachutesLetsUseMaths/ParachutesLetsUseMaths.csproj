@@ -73,8 +73,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GUIElements.cs" />
     <Compile Include="PLUM.cs" />
+    <Compile Include="PlumUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\codecracker.CSharp.1.1.0\analyzers\dotnet\cs\CodeCracker.CSharp.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
