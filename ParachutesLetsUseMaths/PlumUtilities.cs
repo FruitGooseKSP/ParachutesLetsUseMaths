@@ -151,6 +151,90 @@ namespace ParachutesLetsUseMaths
 
         }
 
+        public double GetMulti(int planet, int chute, int count)
+        {
+            double toReturn = 0;
+
+            if (planet == 0)
+            {
+                if (chute == 0 || chute == 2)
+                {
+                    toReturn = count / bValsK[chute];
+                }
+                else
+                {
+                    if (count % 2 == 0)
+                    {
+                        toReturn = Math.Pow(count, 1.5) / bValsK[chute];
+                    }
+                    else
+                    {
+                        toReturn = count / bValsK[chute];
+                    }
+                }
+            }
+            else if (planet == 1)
+            {
+                if (chute == 0 || chute == 2)
+                {
+                    toReturn = count / bValsE[chute];
+                }
+                else
+                {
+                    if (count % 2 == 0)
+                    {
+                        toReturn = Math.Pow(count, 1.5) / bValsE[chute];
+                    }
+                    else
+                    {
+                        toReturn = count / bValsE[chute];
+                    }
+                }
+            }
+            else if (planet == 2)
+            {
+                if (chute == 0 || chute == 2)
+                {
+                    toReturn = count / bValsD[chute];
+                }
+                else
+                {
+                    if (count % 2 == 0)
+                    {
+                        toReturn = Math.Pow(count, 1.5) / bValsD[chute];
+                    }
+                    else
+                    {
+                        toReturn = count / bValsD[chute];
+                    }
+                }
+            }
+            else if (planet == 3)
+            {
+                if (chute == 0 || chute == 2)
+                {
+                    toReturn = count / bValsL[chute];
+                }
+                else
+                {
+                    if (count % 2 == 0)
+                    {
+                        toReturn = Math.Pow(count, 1.5) / bValsL[chute];
+                    }
+                    else
+                    {
+                        toReturn = count / bValsL[chute];
+                    }
+                }
+            }
+
+            return toReturn;
+
+
+
+
+        }
+
         
 
 
