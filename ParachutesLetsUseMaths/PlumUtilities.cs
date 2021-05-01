@@ -8,6 +8,8 @@ namespace ParachutesLetsUseMaths
 {
     public class PlumUtilities
     {
+        // Dictionaries that hold parachute effect factors for each planet/moon
+
         private Dictionary<int, double> bValsK = new Dictionary<int, double>();
         private Dictionary<int, double> bValsE = new Dictionary<int, double>();
         private Dictionary<int, double> bValsD = new Dictionary<int, double>();
@@ -17,8 +19,6 @@ namespace ParachutesLetsUseMaths
         public PlumUtilities()
         {
             CreateDictionaryOfBValues();
-
-
         }
 
         private void CreateDictionaryOfBValues()
@@ -72,11 +72,11 @@ namespace ParachutesLetsUseMaths
             bValsL.Add(3, l3);
             bValsL.Add(4, l4);
 
-
         }
 
         public double BCodeBase(int planet, int chute)
         {
+            // returns the chute power factor according to supplied planet/chute type
 
             switch (planet)
             {
@@ -92,12 +92,12 @@ namespace ParachutesLetsUseMaths
                     return bValsK[chute];
             }
 
-
-
         }
 
         public string FetchATD(int selCode)
         {
+            // returns the atmospheric density for the requested planet
+
             string bodyStr;
 
             switch (selCode)
@@ -125,6 +125,8 @@ namespace ParachutesLetsUseMaths
 
         public string FetchSG(int selCode)
         {
+            // returns the surface gravity for the supplied planet
+
             string bodyStr;
 
             switch (selCode)
@@ -153,89 +155,34 @@ namespace ParachutesLetsUseMaths
 
         public double GetMulti(int planet, int chute, int count)
         {
+            // if there are multiple chutes, the formula is slightly different
+            // techically, multi chutes only give bonus if applied in symmetry. As a very basic check for this, if the number of a particular type of
+            // chute is divisible by 2 exactly (and it's therefore even) we assume they are in symmetry even though they may not be. The amount of occasions a
+            // player will add an even number of the same chutes and they're NOT in symmetry doesn't justify coding the (hundreds of) different options otherwise
+            // at the moment.
+
             double toReturn = 0;
 
             if (planet == 0)
             {
-                if (chute == 0 || chute == 2)
-                {
-                    toReturn = count / bValsK[chute];
-                }
-                else
-                {
-                    if (count % 2 == 0)
-                    {
-                        toReturn = Math.Pow(count, 1.5) / bValsK[chute];
-                    }
-                    else
-                    {
-                        toReturn = count / bValsK[chute];
-                    }
-                }
+                toReturn = chute == 0 || chute == 2 ? count / bValsK[chute] : count % 2 == 0 ? Math.Pow(count, 1.5) / bValsK[chute] : count / bValsK[chute];
             }
             else if (planet == 1)
             {
-                if (chute == 0 || chute == 2)
-                {
-                    toReturn = count / bValsE[chute];
-                }
-                else
-                {
-                    if (count % 2 == 0)
-                    {
-                        toReturn = Math.Pow(count, 1.5) / bValsE[chute];
-                    }
-                    else
-                    {
-                        toReturn = count / bValsE[chute];
-                    }
-                }
+                toReturn = chute == 0 || chute == 2 ? count / bValsE[chute] : count % 2 == 0 ? Math.Pow(count, 1.5) / bValsE[chute] : count / bValsE[chute];
             }
             else if (planet == 2)
             {
-                if (chute == 0 || chute == 2)
-                {
-                    toReturn = count / bValsD[chute];
-                }
-                else
-                {
-                    if (count % 2 == 0)
-                    {
-                        toReturn = Math.Pow(count, 1.5) / bValsD[chute];
-                    }
-                    else
-                    {
-                        toReturn = count / bValsD[chute];
-                    }
-                }
+                toReturn = chute == 0 || chute == 2 ? count / bValsD[chute] : count % 2 == 0 ? Math.Pow(count, 1.5) / bValsD[chute] : count / bValsD[chute];
             }
             else if (planet == 3)
             {
-                if (chute == 0 || chute == 2)
-                {
-                    toReturn = count / bValsL[chute];
-                }
-                else
-                {
-                    if (count % 2 == 0)
-                    {
-                        toReturn = Math.Pow(count, 1.5) / bValsL[chute];
-                    }
-                    else
-                    {
-                        toReturn = count / bValsL[chute];
-                    }
-                }
+                toReturn = chute == 0 || chute == 2 ? count / bValsL[chute] : count % 2 == 0 ? Math.Pow(count, 1.5) / bValsL[chute] : count / bValsL[chute];
             }
 
             return toReturn;
 
-
-
-
         }
-
-        
 
 
     }

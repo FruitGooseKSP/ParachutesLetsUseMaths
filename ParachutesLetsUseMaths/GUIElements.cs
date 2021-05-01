@@ -11,24 +11,43 @@ namespace ParachutesLetsUseMaths
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class GUIElements : MonoBehaviour
     {
-
+        // toolbar button textures
         public Texture btnTxtOn;
         public Texture btnTxtOff;
+
+        // the utilities class
         public PlumUtilities pUtils = new PlumUtilities();
+        
+        // do we have chutes?
         public bool chutesOnboard = false;
+        
+        // how many?
         public int chuteCount;
 
+        // the toolbar button
         public static ApplicationLauncherButton plumBtn;
+        
+        // has the button been pressed?
         public static bool btnIsPressed;
+        
+        // is the button visible?
         public static bool btnIsPresent;
+        
+        //close button for the menu
         public static bool closeBtn;
+        
+        // menu name holders
         public static Rect guiPos;
         public Vector2 menuPosition;
         public Vector2 menuSize;
+
+        // the selected body
         public static int celPick;
+        
+        // the selected velocity
         public static int calcPick;
-        public static int storedCel;
-        public static int storedCalc;
+        
+        // the bodies to pick from
         public static string[] bodies =
         {
             "Kerbin",
@@ -36,6 +55,8 @@ namespace ParachutesLetsUseMaths
             "Duna",
             "Laythe",
         };
+
+        // the velocities to chose from
         public static string[] velChoices =
         {
             "0",
@@ -51,6 +72,7 @@ namespace ParachutesLetsUseMaths
             "10",
         };
 
+        // custom GUIStyles
         public GUIStyle styleBtn;
         public GUIStyle styleLabel;
         public GUIStyle styleLabel2;
@@ -58,9 +80,6 @@ namespace ParachutesLetsUseMaths
         public GUIStyle styleToggle;
         public GUIStyle styleToggle2;
         public GUIStyle styleBox;
-
-
-
 
 
         public void Start()
@@ -73,32 +92,35 @@ namespace ParachutesLetsUseMaths
                     plumBtn = null;
                 }
 
+                // set the textures
                 btnTxtOff = GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/plumOn", false);
                 btnTxtOn = GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/plumOff", false);
 
+                // define the menu particulars
                 menuSize = new Vector2(800, 550);
-                menuPosition = new Vector2((Screen.width / 2) - (menuSize.x / 2), (Screen.height / 2 ) - (menuSize.y / 2));
+                menuPosition = new Vector2((Screen.width / 2) - (menuSize.x / 2), (Screen.height / 2) - (menuSize.y / 2));
                 guiPos = new Rect(menuPosition, menuSize);
                 btnIsPressed = false;
                 closeBtn = false;
 
+                // instaniate the button
                 plumBtn = ApplicationLauncher.Instance.AddModApplication(onTrue, onFalse, onHover, onHoverOut, null, null,
                     ApplicationLauncher.AppScenes.VAB | ApplicationLauncher.AppScenes.SPH, btnTxtOff);
-                
+
 
                 btnIsPresent = true;
                 celPick = 0;
-                storedCel = 0;
                 calcPick = 8;
-                storedCalc = 0;
+
+                // define our custom styles
 
                 styleBtn = new GUIStyle(HighLogic.Skin.button);
                 styleLabel = new GUIStyle(HighLogic.Skin.label);
                 styleLabel2 = new GUIStyle(HighLogic.Skin.label)
                 {
-                    margin = new RectOffset(50, 50, 25,25),
-                    
-                
+                    margin = new RectOffset(50, 50, 25, 25),
+
+
                 };
 
                 styleLabel2.normal.textColor = Color.white;
@@ -107,16 +129,16 @@ namespace ParachutesLetsUseMaths
                 {
                     margin = new RectOffset(50, 50, 25, 25),
                     fontStyle = FontStyle.Bold,
-                    
+
                 };
-               
-                
+
+
                 styleToggle = new GUIStyle(HighLogic.Skin.toggle)
                 {
-                    
+
                     margin = new RectOffset(150, 150, 25, 25),
                     stretchWidth = true,
-                   
+
                 };
 
                 styleToggle2 = new GUIStyle(HighLogic.Skin.toggle)
@@ -129,16 +151,11 @@ namespace ParachutesLetsUseMaths
 
                 styleBox = new GUIStyle(HighLogic.Skin.box)
                 {
-                    
+
                     border = new RectOffset(25, 25, 25, 25),
 
 
                 };
-
-
-
-
-
 
             }
             else
@@ -150,9 +167,6 @@ namespace ParachutesLetsUseMaths
                     btnIsPresent = false;
                 }
             }
-
-
-
 
 
         }
@@ -169,14 +183,6 @@ namespace ParachutesLetsUseMaths
                         closeBtn = false;
                     }
 
-                    else if (btnIsPresent)
-                    {
-                        
-                    }
-
-
-
-
                 }
             }
             else
@@ -191,6 +197,7 @@ namespace ParachutesLetsUseMaths
 
         }
 
+        // Gets the amount of chutes currently on our vessel
         public string GetParachuteQty()
         {
             if (btnIsPressed)
@@ -222,19 +229,18 @@ namespace ParachutesLetsUseMaths
 
             else return null;
 
-
-
         }
 
-        public string GetVesselMass()
+        // Gets our ships mass. This figure differs from the Engineer's Report, but that figure seems locked out
+
+        public static string GetVesselMass()
         {
             if (btnIsPressed)
             {
                 float vesDM;
                 float vesWM;
                 EditorLogic.fetch.ship.GetShipMass(out vesDM, out vesWM);
-
-                float totalMass = (vesDM + vesWM) * 1000;
+                float totalMass = (vesDM + vesWM) * 1000;  // convert from tons to KG
 
                 return totalMass.ToString();
             }
@@ -242,21 +248,14 @@ namespace ParachutesLetsUseMaths
             else return null;
         }
 
-        public string GetATD()
-        {
-           
-                return pUtils.FetchATD(celPick);
-          
-        }
+        // Get atmospheric density for out chosen planet
+        public string GetATD() => pUtils.FetchATD(celPick);
 
-        public string GetSurfaceGravity()
-        {
-           
-                return pUtils.FetchSG(celPick);
-            
-            
-        }
+        // Get surface gravity
+        public string GetSurfaceGravity() => pUtils.FetchSG(celPick);
+        
 
+        // Get chute power modifier
         public string GetBValue()
         {
             if (chutesOnboard)
@@ -301,14 +300,9 @@ namespace ParachutesLetsUseMaths
                             }
                             else paraCode = 0;
 
-                            double tempVal = pUtils.BCodeBase(celPick, paraCode);
-
-                            runningTotal = tempVal;
-
+                            runningTotal = pUtils.BCodeBase(celPick, paraCode);
 
                         }
-
-
                     }
 
                     return runningTotal.ToString();
@@ -317,25 +311,26 @@ namespace ParachutesLetsUseMaths
                 else
                 {
                     return "Multiple Chutes";
-
-                   
-
                 }
             }
             else return null;
         }
 
+        // calculate the velocity
         public string GetTDVelocity()
         {
             if (chutesOnboard)
             {
                 if (chuteCount == 1)
                 {
-                    double m = Double.Parse(GetVesselMass());
-                    double b = Double.Parse(GetBValue());
+                    double m = double.Parse(GetVesselMass());
+                    double b = double.Parse(GetBValue());
                     double p = 1;
 
-                    double touchDownVelocity = (Math.Sqrt(m * (b / p))) * 1.14;
+                    double touchDownVelocity = (Math.Sqrt(m * (b / p))) * 1.14; // for single non-radial chutes, the velocity is off by about 14% for some unknown reason
+                                                                                // maybe mass related? Adding this on gives a more accurate figure
+
+                    // change the text colour depending on result
 
                     if (touchDownVelocity > calcPick)
                     {
@@ -350,8 +345,9 @@ namespace ParachutesLetsUseMaths
                 }
                 else
                 {
-                    //  v = sqrt(m * (1 / (Eb))
-                    double m = Double.Parse(GetVesselMass());
+                    //  v = sqrt(m * (1 / (n(^?x) / b))
+
+                    double m = double.Parse(GetVesselMass());
                     int type0Count = 0;
                     int type1Count = 0;
                     int type2Count = 0;
@@ -363,7 +359,6 @@ namespace ParachutesLetsUseMaths
                         if (part.HasModuleImplementing<ModuleParachute>())
                         {
                             string name = part.name;
-
 
                             if (name == "parachuteSingle")
                             {
@@ -391,7 +386,6 @@ namespace ParachutesLetsUseMaths
                             }
                             else type0Count += 1;
 
-
                         }
                     }
 
@@ -407,7 +401,6 @@ namespace ParachutesLetsUseMaths
 
                     return vel.ToString();
 
-
                 }
             }
             else
@@ -417,60 +410,43 @@ namespace ParachutesLetsUseMaths
             }
         }
 
-     
 
 
 
+        // GUI Menu Window
         public void MenuWindow(int WindowID)
         {
+
             GUI.BeginGroup(new Rect(0, 0, menuSize.x, menuSize.y));
             GUI.Box(new Rect(0, 0, menuSize.x, menuSize.y), GUIContent.none);
 
-            
-
             GUI.Label(new Rect(50, 35, menuSize.x - 100, 25), "Select Celestial Body:", styleLabel);
-
             celPick = GUI.SelectionGrid(new Rect(50, 70, menuSize.x - 100, 25), celPick, bodies, 4, styleToggle);
-
             GUI.Label(new Rect(50, 125, menuSize.x - 100, 25), "Choose Maximum Velocity: " + calcPick + " m/s", styleLabel);
-
-            calcPick = (int)GUI.HorizontalSlider(new Rect(50, 170, menuSize.x - 100, 25), calcPick, 0, 10, new GUIStyle(HighLogic.Skin.horizontalSlider), 
+            calcPick = (int)GUI.HorizontalSlider(new Rect(50, 170, menuSize.x - 100, 25), calcPick, 0, 10, new GUIStyle(HighLogic.Skin.horizontalSlider),
                 new GUIStyle(HighLogic.Skin.horizontalSliderThumb));
-            
             GUI.Label(new Rect(50, 225, menuSize.x - 100, 25), "Calculations", styleLabel);
-
             GUI.Box(new Rect(50, 250, menuSize.x - 100, 200), GUIContent.none, styleBox);
-
-           
-                GUI.Label(new Rect(75, 275, menuSize.x - 150, 25), "Parachute Quantity = " + GetParachuteQty(), styleLabel2);
-
-                GUI.Label(new Rect(75, 300, menuSize.x - 150, 25), "Vessel (Wet) Mass, Kg = " + GetVesselMass(), styleLabel2);
-
-                GUI.Label(new Rect(75, 325, menuSize.x - 150, 25), "Atomospheric Density, kPa = " + GetATD(), styleLabel2);
-
-                GUI.Label(new Rect(75, 350, menuSize.x - 150, 25), "Surface Gravity, m/s2 = " + GetSurfaceGravity(), styleLabel2);
-
-                GUI.Label(new Rect(75, 375, menuSize.x - 150, 25), "Combined Parachute Magnitude Factor, bPmf = " + GetBValue(), styleLabel2);
-
-                GUI.Label(new Rect(75, 400, menuSize.x - 150, 25), "Predicted Touchdown Velocity, m/s = " + GetTDVelocity(), styleLabel3);
-            
-
-           
+            GUI.Label(new Rect(75, 275, menuSize.x - 150, 25), "Parachute Quantity = " + GetParachuteQty(), styleLabel2);
+            GUI.Label(new Rect(75, 300, menuSize.x - 150, 25), "Vessel (Wet) Mass, Kg = " + GetVesselMass(), styleLabel2);
+            GUI.Label(new Rect(75, 325, menuSize.x - 150, 25), "Atomospheric Density, kPa = " + GetATD(), styleLabel2);
+            GUI.Label(new Rect(75, 350, menuSize.x - 150, 25), "Surface Gravity, m/s2 = " + GetSurfaceGravity(), styleLabel2);
+            GUI.Label(new Rect(75, 375, menuSize.x - 150, 25), "Combined Parachute Magnitude Factor, bPmf = " + GetBValue(), styleLabel2);
+            GUI.Label(new Rect(75, 400, menuSize.x - 150, 25), "Predicted Touchdown Velocity, m/s = " + GetTDVelocity(), styleLabel3);
 
             closeBtn = GUI.Button(new Rect(menuSize.x - 150, menuSize.y - 75, 100, 50), "Close", styleBtn);
 
             GUI.DragWindow();
-
+            
             GUI.EndGroup();
 
         }
 
+        // show the menu
         public void ItsPlumTime()
         {
             guiPos = GUI.Window(123458, guiPos, MenuWindow,
                "Parachute Information", new GUIStyle(HighLogic.Skin.window));
-
-
 
             plumBtn.SetTrue();
             btnIsPresent = true;
@@ -483,7 +459,7 @@ namespace ParachutesLetsUseMaths
         }
 
 
-
+        // onGUI
         public void OnGUI()
         {
             if (btnIsPressed)
@@ -499,7 +475,6 @@ namespace ParachutesLetsUseMaths
         {
             btnIsPressed = true;
             plumBtn.SetTexture(btnTxtOn);
-
         }
 
         public void onFalse()
@@ -509,7 +484,7 @@ namespace ParachutesLetsUseMaths
             {
                 plumBtn.SetTexture(btnTxtOff);
                 btnIsPressed = false;
-                
+
                 foreach (var part in EditorLogic.fetch.ship.parts)
                 {
                     if (part.HighlightActive)
@@ -536,11 +511,8 @@ namespace ParachutesLetsUseMaths
             ApplicationLauncher.Instance.RemoveModApplication(plumBtn);
             plumBtn = null;
             btnIsPresent = false;
-            
+
         }
-
-
-
 
 
 

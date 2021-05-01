@@ -10,12 +10,12 @@ namespace ParachutesLetsUseMaths
     public class PLUM : MonoBehaviour
     {
 
+        // this Class isn't technically needed now as everything is being handled inside GUIElements but kept for
+        // future use
+
         public static PLUM Instance;
         public static GUIElements guiPlum = new GUIElements();
         public PlumUtilities utils;
-
-
-
 
         public void Start()
         {
@@ -24,44 +24,11 @@ namespace ParachutesLetsUseMaths
                 Instance = this;
                 utils = new PlumUtilities();
 
-
-
-
-
-
-
-
-
-
-
-
-
             }
             else return;
 
 
-
-
-
         }
-
-        public void Update()
-        {
-
-
-
-
-
-        }
-
-
-
-
-
-
-
-
-
 
 
     }
