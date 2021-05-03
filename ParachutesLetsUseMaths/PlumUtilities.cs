@@ -14,20 +14,15 @@ namespace ParachutesLetsUseMaths
         private Dictionary<int, double> bValsE = new Dictionary<int, double>();
         private Dictionary<int, double> bValsD = new Dictionary<int, double>();
         private Dictionary<int, double> bValsL = new Dictionary<int, double>();
-        private Dictionary<int, double> bValsKm = new Dictionary<int, double>();
-        private Dictionary<int, double> bValsEm = new Dictionary<int, double>();
-        private Dictionary<int, double> bValsDm = new Dictionary<int, double>();
-        private Dictionary<int, double> bValsLm = new Dictionary<int, double>();
 
-
+        // main
         public PlumUtilities()
         {
             CreateDictionaryOfBValuesS();
-            
+
         }
 
-       
-
+        // adds values to dictionaries
         private void CreateDictionaryOfBValuesS()
         {
 
@@ -84,23 +79,21 @@ namespace ParachutesLetsUseMaths
         public double BCodeBase(int planet, int chute)
         {
             // returns the chute power factor according to supplied planet/chute type
-            
 
+            switch (planet)
+            {
+                case 0:
+                    return bValsK[chute];
+                case 1:
+                    return bValsE[chute];
+                case 2:
+                    return bValsD[chute];
+                case 3:
+                    return bValsL[chute];
+                default:
+                    return bValsK[chute];
+            }
 
-                switch (planet)
-                {
-                    case 0:
-                        return bValsK[chute];
-                    case 1:
-                        return bValsE[chute];
-                    case 2:
-                        return bValsD[chute];
-                    case 3:
-                        return bValsL[chute];
-                    default:
-                        return bValsK[chute];
-                }
-           
 
         }
 
@@ -165,14 +158,13 @@ namespace ParachutesLetsUseMaths
 
         public double GetMulti(int planet, int chute, int count)
         {
-            // if there are multiple chutes, the formula is slightly different
-            // techically, multi chutes give a bonus (ie 2 chutes not in symmetry will be 2 x stopping power.
-            // However, 2 chutes that are in symmetry is 2^1.525 x stopping power.
-            // As a very basic check for this, if the number of a particular type of
-            // chute is divisible by 2 exactly (and it's therefore even) we assume they are in
-            // symmetry even though they may not be. The amount of occasions a
-            // player will add an even number of the same chutes and they're NOT in symmetry doesn't
-            // justify coding the (hundreds of) different options at the moment.
+            // if there are multiple chutes, the formula is slightly different as there is a bonus for using radial chutes in symmetry.
+            // this was originally calculated as a 1.5 bonus (as opposed to standard 1) however this doesn't work anymore/with enough accuracy.
+            // As a compromise I've settled on 1.525 although this isn't 100% either. Unfortunately unless the offical details are released by
+            // squad, it is near impossibe to calculate exactly.
+            // To check whether radial chutes are in symmetry I've used a simple "is it divisable by 2" (ie an even number). This is of course
+            // flawed as a player could technically put radial chutes in even numbers without being in symmetry but the hundreds of possibilites
+            // aren't worth coding for the 1 in a million chance that might happen. Perhaps we could say the player is punished for such a ridiculous design!
 
             double toReturn;
 
