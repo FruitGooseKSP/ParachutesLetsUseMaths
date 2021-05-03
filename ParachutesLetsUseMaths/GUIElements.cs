@@ -17,25 +17,25 @@ namespace ParachutesLetsUseMaths
 
         // the utilities class
         public PlumUtilities pUtils = new PlumUtilities();
-        
+
         // do we have chutes?
         public bool chutesOnboard = false;
-        
+
         // how many?
         public int chuteCount;
 
         // the toolbar button
         public static ApplicationLauncherButton plumBtn;
-        
+
         // has the button been pressed?
         public static bool btnIsPressed;
-        
+
         // is the button visible?
         public static bool btnIsPresent;
-        
+
         //close button for the menu
         public static bool closeBtn;
-        
+
         // menu name holders
         public static Rect guiPos;
         public Vector2 menuPosition;
@@ -43,10 +43,10 @@ namespace ParachutesLetsUseMaths
 
         // the selected body
         public static int celPick;
-        
+
         // the selected velocity
         public static int calcPick;
-        
+
         // the bodies to pick from
         public static string[] bodies =
         {
@@ -248,12 +248,12 @@ namespace ParachutesLetsUseMaths
             else return null;
         }
 
-        // Get atmospheric density for out chosen planet
+        // Get atmospheric pressure for out chosen planet
         public string GetATD() => pUtils.FetchATD(celPick);
 
         // Get surface gravity
         public string GetSurfaceGravity() => pUtils.FetchSG(celPick);
-        
+
 
         // Get chute power modifier
         public string GetBValue()
@@ -325,21 +325,12 @@ namespace ParachutesLetsUseMaths
                 {
                     double m = double.Parse(GetVesselMass());
                     double b = double.Parse(GetBValue());
-                    double p = 1;
 
-                    double touchDownVelocity = (Math.Sqrt(m * (b / p))) * 1.14; // for single non-radial chutes, the velocity is off by about 14% for some unknown reason
-                                                                                // maybe mass related? Adding this on gives a more accurate figure
+                    double touchDownVelocity = Math.Round(Math.Sqrt(m * b), 3);
 
                     // change the text colour depending on result
 
-                    if (touchDownVelocity > calcPick)
-                    {
-                        styleLabel3.normal.textColor = Color.red;
-                    }
-                    else
-                    {
-                        styleLabel3.normal.textColor = Color.green;
-                    }
+                    styleLabel3.normal.textColor = touchDownVelocity > calcPick ? Color.red : Color.green;             
 
                     return touchDownVelocity.ToString();
                 }
@@ -397,7 +388,12 @@ namespace ParachutesLetsUseMaths
 
                     double multiB = t0RT + t1RT + t2RT + t3RT + t4RT;
 
-                    double vel = Math.Sqrt(m * (1 / multiB));
+                    double vel = Math.Round(Math.Sqrt(m * (1 / multiB)), 3);
+
+                    
+                                 
+
+                    styleLabel3.normal.textColor = vel > calcPick ? Color.red : Color.green;
 
                     return vel.ToString();
 
@@ -429,7 +425,7 @@ namespace ParachutesLetsUseMaths
             GUI.Box(new Rect(50, 250, menuSize.x - 100, 200), GUIContent.none, styleBox);
             GUI.Label(new Rect(75, 275, menuSize.x - 150, 25), "Parachute Quantity = " + GetParachuteQty(), styleLabel2);
             GUI.Label(new Rect(75, 300, menuSize.x - 150, 25), "Vessel (Wet) Mass, Kg = " + GetVesselMass(), styleLabel2);
-            GUI.Label(new Rect(75, 325, menuSize.x - 150, 25), "Atomospheric Density, kPa = " + GetATD(), styleLabel2);
+            GUI.Label(new Rect(75, 325, menuSize.x - 150, 25), "Atomospheric Pressure, kPa = " + GetATD(), styleLabel2);
             GUI.Label(new Rect(75, 350, menuSize.x - 150, 25), "Surface Gravity, m/s2 = " + GetSurfaceGravity(), styleLabel2);
             GUI.Label(new Rect(75, 375, menuSize.x - 150, 25), "Combined Parachute Magnitude Factor, bPmf = " + GetBValue(), styleLabel2);
             GUI.Label(new Rect(75, 400, menuSize.x - 150, 25), "Predicted Touchdown Velocity, m/s = " + GetTDVelocity(), styleLabel3);
@@ -437,7 +433,7 @@ namespace ParachutesLetsUseMaths
             closeBtn = GUI.Button(new Rect(menuSize.x - 150, menuSize.y - 75, 100, 50), "Close", styleBtn);
 
             GUI.DragWindow();
-            
+
             GUI.EndGroup();
 
         }

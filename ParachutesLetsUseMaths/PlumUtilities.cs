@@ -14,39 +14,46 @@ namespace ParachutesLetsUseMaths
         private Dictionary<int, double> bValsE = new Dictionary<int, double>();
         private Dictionary<int, double> bValsD = new Dictionary<int, double>();
         private Dictionary<int, double> bValsL = new Dictionary<int, double>();
+        private Dictionary<int, double> bValsKm = new Dictionary<int, double>();
+        private Dictionary<int, double> bValsEm = new Dictionary<int, double>();
+        private Dictionary<int, double> bValsDm = new Dictionary<int, double>();
+        private Dictionary<int, double> bValsLm = new Dictionary<int, double>();
 
 
         public PlumUtilities()
         {
-            CreateDictionaryOfBValues();
+            CreateDictionaryOfBValuesS();
+            
         }
 
-        private void CreateDictionaryOfBValues()
+       
+
+        private void CreateDictionaryOfBValuesS()
         {
 
-            const double k0 = 0.029;
-            const double k1 = 0.039;
-            const double k2 = 0.020;
-            const double k3 = 1.099;
-            const double k4 = 1.065;
+            const double k0 = 0.0332;
+            const double k1 = 0.0371;
+            const double k2 = 0.0230;
+            const double k3 = 1.3700;
+            const double k4 = 1.2786;
 
-            const double e0 = 0.009;
-            const double e1 = 0.012;
-            const double e2 = 0.006;
-            const double e3 = 0.340;
-            const double e4 = 0.330;
+            const double e0 = 0.0106;
+            const double e1 = 0.0114;
+            const double e2 = 0.0070;
+            const double e3 = 0.4841;
+            const double e4 = 0.3859;
 
-            const double d0 = 0.079;
-            const double d1 = 0.105;
-            const double d2 = 0.054;
-            const double d3 = 2.967;
-            const double d4 = 2.877;
+            const double d0 = 0.0936;
+            const double d1 = 0.1182;
+            const double d2 = 0.0659;
+            const double d3 = 3.7549;
+            const double d4 = 3.3189;
 
-            const double l0 = 0.036;
-            const double l1 = 0.047;
-            const double l2 = 0.024;
-            const double l3 = 1.331;
-            const double l4 = 1.291;
+            const double l0 = 0.0384;
+            const double l1 = 0.0531;
+            const double l2 = 0.0279;
+            const double l3 = 1.7339;
+            const double l4 = 1.5006;
 
             bValsK.Add(0, k0);
             bValsK.Add(1, k1);
@@ -77,26 +84,29 @@ namespace ParachutesLetsUseMaths
         public double BCodeBase(int planet, int chute)
         {
             // returns the chute power factor according to supplied planet/chute type
+            
 
-            switch (planet)
-            {
-                case 0:
-                    return bValsK[chute];
-                case 1:
-                    return bValsE[chute];
-                case 2:
-                    return bValsD[chute];
-                case 3:
-                    return bValsL[chute];
-                default:
-                    return bValsK[chute];
-            }
+
+                switch (planet)
+                {
+                    case 0:
+                        return bValsK[chute];
+                    case 1:
+                        return bValsE[chute];
+                    case 2:
+                        return bValsD[chute];
+                    case 3:
+                        return bValsL[chute];
+                    default:
+                        return bValsK[chute];
+                }
+           
 
         }
 
         public string FetchATD(int selCode)
         {
-            // returns the atmospheric density for the requested planet
+            // returns the atmospheric pressure for the requested planet
 
             string bodyStr;
 
@@ -156,28 +166,31 @@ namespace ParachutesLetsUseMaths
         public double GetMulti(int planet, int chute, int count)
         {
             // if there are multiple chutes, the formula is slightly different
-            // techically, multi chutes only give bonus if applied in symmetry. As a very basic check for this, if the number of a particular type of
-            // chute is divisible by 2 exactly (and it's therefore even) we assume they are in symmetry even though they may not be. The amount of occasions a
-            // player will add an even number of the same chutes and they're NOT in symmetry doesn't justify coding the (hundreds of) different options otherwise
-            // at the moment.
+            // techically, multi chutes give a bonus (ie 2 chutes not in symmetry will be 2 x stopping power.
+            // However, 2 chutes that are in symmetry is 2^1.525 x stopping power.
+            // As a very basic check for this, if the number of a particular type of
+            // chute is divisible by 2 exactly (and it's therefore even) we assume they are in
+            // symmetry even though they may not be. The amount of occasions a
+            // player will add an even number of the same chutes and they're NOT in symmetry doesn't
+            // justify coding the (hundreds of) different options at the moment.
 
-            double toReturn = 0;
+            double toReturn;
 
-            if (planet == 0)
+            switch (planet)
             {
-                toReturn = chute == 0 || chute == 2 ? count / bValsK[chute] : count % 2 == 0 ? Math.Pow(count, 1.5) / bValsK[chute] : count / bValsK[chute];
-            }
-            else if (planet == 1)
-            {
-                toReturn = chute == 0 || chute == 2 ? count / bValsE[chute] : count % 2 == 0 ? Math.Pow(count, 1.5) / bValsE[chute] : count / bValsE[chute];
-            }
-            else if (planet == 2)
-            {
-                toReturn = chute == 0 || chute == 2 ? count / bValsD[chute] : count % 2 == 0 ? Math.Pow(count, 1.5) / bValsD[chute] : count / bValsD[chute];
-            }
-            else if (planet == 3)
-            {
-                toReturn = chute == 0 || chute == 2 ? count / bValsL[chute] : count % 2 == 0 ? Math.Pow(count, 1.5) / bValsL[chute] : count / bValsL[chute];
+                case 0:
+                    toReturn = chute == 0 || chute == 2 || chute == 3 ? count / bValsK[chute] : count % 2 == 0 ? Math.Pow(count, 1.525) / bValsK[chute] : count / bValsK[chute];
+                    break;
+                case 1:
+                    toReturn = chute == 0 || chute == 2 || chute == 3 ? count / bValsE[chute] : count % 2 == 0 ? Math.Pow(count, 1.525) / bValsE[chute] : count / bValsE[chute];
+                    break;
+                case 2:
+                    toReturn = chute == 0 || chute == 2 || chute == 3 ? count / bValsD[chute] : count % 2 == 0 ? Math.Pow(count, 1.525) / bValsD[chute] : count / bValsD[chute];
+                    break;
+                default:
+                    toReturn = chute == 0 || chute == 2 || chute == 3 ? count / bValsL[chute] : count % 2 == 0 ? Math.Pow(count, 1.525) / bValsL[chute] : count / bValsL[chute];
+                    break;
+
             }
 
             return toReturn;
