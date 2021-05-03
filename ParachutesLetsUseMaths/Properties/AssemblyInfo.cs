@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ParachutesLetsUseMaths")]
-[assembly: AssemblyCopyright("Copyright ©  2021")]
+[assembly: AssemblyCopyright("Copyright © 2021 James Ford (FruitGoose)")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
