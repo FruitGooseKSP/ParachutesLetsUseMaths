@@ -44,6 +44,9 @@ namespace ParachutesLetsUseMaths
         //close button for the menu
         public static bool closeBtn;
 
+        // options button
+        public static bool optionsBtn;
+
         // menu name holders
         public static Rect guiPos;
         public Vector2 menuPosition;
@@ -56,6 +59,7 @@ namespace ParachutesLetsUseMaths
             "Eve",
             "Duna",
             "Laythe",
+            "Custom",
         };
 
         // the velocities to chose from
@@ -82,6 +86,7 @@ namespace ParachutesLetsUseMaths
         public GUIStyle styleToggle;
         public GUIStyle styleToggle2;
         public GUIStyle styleBox;
+        public GUIStyle styleOptionBtn;
 
 
         public void Start()
@@ -104,6 +109,7 @@ namespace ParachutesLetsUseMaths
                 guiPos = new Rect(menuPosition, menuSize);
                 btnIsPressed = false;
                 closeBtn = false;
+                optionsBtn = false;
 
                 // instantiate the button
                 plumBtn = ApplicationLauncher.Instance.AddModApplication(onTrue, onFalse, onHover, onHoverOut, null, null,
@@ -154,6 +160,9 @@ namespace ParachutesLetsUseMaths
                     border = new RectOffset(25, 25, 25, 25),
                 };
 
+                styleOptionBtn = new GUIStyle(HighLogic.Skin.button);
+                
+
             }
             else
             {
@@ -178,6 +187,10 @@ namespace ParachutesLetsUseMaths
                     {
                         plumBtn.SetFalse();
                         closeBtn = false;
+                    }
+                    if (optionsBtn)
+                    {
+
                     }
                 }
             }
@@ -404,8 +417,14 @@ namespace ParachutesLetsUseMaths
 
             GUI.Box(new Rect(0, 0, menuSize.x, menuSize.y), GUIContent.none);
 
+            // todo set new config for options
+
+
+            closeBtn = GUI.Button(new Rect(menuSize.x - 35, 0, 35, 35), "X", styleBtn);
+            optionsBtn = GUI.Button(new Rect(menuSize.x - 70, 0, 35, 35), GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/plumOn", false), styleOptionBtn);
+
             GUI.Label(new Rect(50, 35, menuSize.x - 100, 25), "Select Celestial Body:", styleLabel);
-            celPick = GUI.SelectionGrid(new Rect(50, 70, menuSize.x - 100, 25), celPick, bodies, 4, styleToggle);
+            celPick = GUI.SelectionGrid(new Rect(50, 70, menuSize.x - 100, 25), celPick, bodies, 5, styleToggle);
 
             GUI.Label(new Rect(50, 125, menuSize.x - 100, 25), "Choose Maximum Velocity: " + calcPick + " m/s", styleLabel);
             calcPick = (int)GUI.HorizontalSlider(new Rect(50, 170, menuSize.x - 100, 25), calcPick, 0, 10, new GUIStyle(HighLogic.Skin.horizontalSlider),
@@ -420,7 +439,8 @@ namespace ParachutesLetsUseMaths
             GUI.Label(new Rect(75, 375, menuSize.x - 150, 25), "Parachute Magnitude Factor, bPmf = " + GetBValue(), styleLabel2);
             GUI.Label(new Rect(75, 400, menuSize.x - 150, 25), "Approximate Touchdown Velocity, m/s = " + GetTDVelocity(), styleLabel3);
 
-            closeBtn = GUI.Button(new Rect(menuSize.x - 150, menuSize.y - 75, 100, 50), "Close", styleBtn);
+       //     closeBtn = GUI.Button(new Rect(menuSize.x - 150, menuSize.y - 75, 100, 50), "Close", styleBtn);
+            
 
             GUI.DragWindow();
 
@@ -428,11 +448,13 @@ namespace ParachutesLetsUseMaths
 
         }
 
+    
+
         // show the menu
         public void ItsPlumTime()
         {
             guiPos = GUI.Window(123458, guiPos, MenuWindow,
-               "Parachute Information", new GUIStyle(HighLogic.Skin.window));
+               "Parachutes? Let's Use Maths!", new GUIStyle(HighLogic.Skin.window));
 
             plumBtn.SetTrue();
             btnIsPresent = true;
@@ -444,6 +466,15 @@ namespace ParachutesLetsUseMaths
             else plumBtn.SetFalse();
         }
 
+        public void LaunchOptions()
+        {
+           /*
+            PlumOptionsGUI opnsGUI = new PlumOptionsGUI();
+            guiPos2 = GUI.Window(123459, guiPos, OptionsWindow,
+                "Custom Options", new GUIStyle(HighLogic.Skin.window));
+
+            */
+        }
 
         // onGUI
         public void OnGUI()
@@ -451,6 +482,11 @@ namespace ParachutesLetsUseMaths
             if (btnIsPressed)
             {
                 ItsPlumTime();
+            }
+
+            if (optionsBtn)
+            {
+                LaunchOptions();
             }
         }
 
