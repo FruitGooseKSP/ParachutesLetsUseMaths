@@ -19,7 +19,7 @@ namespace ParachutesLetsUseMaths
         [KSPField(isPersistant = true)]
         public static int calcPick;
 
-        public static float customGravVal = 0.00F;
+        public static float customGravVal = 0.01f;
 
         // toolbar button textures
         public Texture btnTxtOn;
@@ -50,6 +50,9 @@ namespace ParachutesLetsUseMaths
         public static bool optionsBtn;
         public static bool optionsPressed;
 
+        public static bool btnAdd1A;
+        public static bool btnMinus1A;
+     
         public string gravityCustom;
 
         // menu name holders
@@ -186,6 +189,7 @@ namespace ParachutesLetsUseMaths
 
                 
                 
+                
 
             }
             else
@@ -231,7 +235,31 @@ namespace ParachutesLetsUseMaths
 
                         optPos.x = newMenuPos.x + menuSize.x;
                         optPos.y = newMenuPos.y;
+
+
+                        if (btnAdd1A)
+                        {
+                            customGravVal += 0.01f;
+                            customGravVal = float.Parse(Math.Round(double.Parse(customGravVal.ToString()), 2).ToString());
+                            btnAdd1A = false;
+                        }
                         
+                        if (btnMinus1A)
+                        {
+                            if (customGravVal > 0.01f)
+                            {
+                                customGravVal -= 0.01f;
+                                customGravVal = float.Parse(Math.Round(double.Parse(customGravVal.ToString()), 2).ToString());
+                                btnMinus1A = false;
+                            }
+                            else
+                            {
+                                btnMinus1A = false;
+                            }
+                        }
+
+                        
+
 
 
 
@@ -498,16 +526,26 @@ namespace ParachutesLetsUseMaths
             GUI.BeginGroup(new Rect(0, 0, optSize.x, optSize.y));
             GUI.Box(new Rect(0, 0, optSize.x, optSize.y), GUIContent.none);
 
-            GUI.Label(new Rect(50, 70, optSize.x - 100, 25), "Surface Gravity, m/s2 = " + customGravVal, styleLabel);
-            
-            customGravVal = GUI.HorizontalSlider(new Rect(50, 125, optSize.x - 100, 25), customGravVal, 0.00f, 20.00f, new GUIStyle(HighLogic.Skin.horizontalSlider),
+            GUI.Label(new Rect(50, 35, optSize.x - 100, 25), "Surface Gravity, m/s2 = " + customGravVal.ToString(), styleLabel);
+
+            customGravVal = GUI.HorizontalSlider(new Rect(50, 80, optSize.x - 100, 25), customGravVal, 0, 30, new GUIStyle(HighLogic.Skin.horizontalSlider),
                     new GUIStyle(HighLogic.Skin.horizontalSliderThumb));
+
+            if (GUI.changed)
+            {
+                customGravVal = float.Parse(Math.Round(double.Parse(customGravVal.ToString()), 2).ToString());
+            }
+
+            btnMinus1A = GUI.Button(new Rect(50, 115, 100, 25), "- 0.01");
+            btnAdd1A = GUI.Button(new Rect(150, 115, 100, 25), "+ 0.01");
 
 
             GUI.DragWindow();
 
             GUI.EndGroup();
         }
+
+     
 
 
         // show the menu
