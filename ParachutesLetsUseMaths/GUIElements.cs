@@ -19,11 +19,17 @@ namespace ParachutesLetsUseMaths
         [KSPField(isPersistant = true)]
         public static int calcPick;
 
+        public static int chutePick = 0;
+
         public static float customGravVal = 0.01f;
+        public static float customAirDensity = 1.22498f;
+        public static float customDragConstant = 552.296f;
 
         // toolbar button textures
         public Texture btnTxtOn;
         public Texture btnTxtOff;
+        public Texture optionsTxt;
+        public Texture closeTxt;
 
         // the utilities class
         public PlumUtilities pUtils = new PlumUtilities();
@@ -46,13 +52,25 @@ namespace ParachutesLetsUseMaths
         //close button for the menu
         public static bool closeBtn;
 
+        public static bool saveOptionsBtn;
+
         // options button
         public static bool optionsBtn;
         public static bool optionsPressed;
 
         public static bool btnAdd1A;
         public static bool btnMinus1A;
-     
+        public static bool btnAdd1B;
+        public static bool btnMinus1B;
+        public static bool btnAdd1C;
+        public static bool btnMinus1C;
+        public static bool btnAdd1D;
+        public static bool btnMinus1D;
+        public static bool btnAdd1E;
+        public static bool btnMinus1E;
+        public static bool prevChute;
+        public static bool nextChute;
+
         public string gravityCustom;
 
         // menu name holders
@@ -90,6 +108,15 @@ namespace ParachutesLetsUseMaths
             "10",
         };
 
+        public static string[] chuteChoices =
+        {
+            "Mk16",
+            "Mk2r (Radial)",
+            "Mk16-XL",
+            "Mk25 (Drogue)",
+            "Mk12r (Drogue, Radial)",
+        };
+
         // custom GUIStyles
         public GUIStyle styleBtn;
         public GUIStyle styleLabel;
@@ -97,6 +124,7 @@ namespace ParachutesLetsUseMaths
         public GUIStyle styleLabel3;
         public GUIStyle styleToggle;
         public GUIStyle styleToggle2;
+        public GUIStyle styleToggle3;
         public GUIStyle styleBox;
         public GUIStyle styleOptionBtn;
         public GUIStyle styleTextField;
@@ -115,6 +143,8 @@ namespace ParachutesLetsUseMaths
                 // set the textures
                 btnTxtOff = GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/plumOn", false);
                 btnTxtOn = GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/plumOff", false);
+                optionsTxt = GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/plumOptions", false);
+                closeTxt = GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/closeTexture", false);
 
                 // define the menu particulars
                 menuSize = new Vector2(800, 550);
@@ -175,6 +205,12 @@ namespace ParachutesLetsUseMaths
                 styleToggle2 = new GUIStyle(HighLogic.Skin.toggle)
                 {
                     margin = new RectOffset(250, 250, 25, 25),
+                    stretchWidth = true,
+                };
+
+                styleToggle3 = new GUIStyle(HighLogic.Skin.toggle)
+                {
+                    margin = new RectOffset(100, 0, 25, 25),
                     stretchWidth = true,
                 };
 
@@ -258,9 +294,83 @@ namespace ParachutesLetsUseMaths
                             }
                         }
 
-                        
+                        if (btnAdd1B || btnAdd1C)
+                        {
+                            customAirDensity += 0.00001f;
+                            customAirDensity = float.Parse(Math.Round(double.Parse(customAirDensity.ToString()), 5).ToString());
+                            btnAdd1B = false;
+                            btnAdd1C = false;
+                        }
+
+                        if (btnMinus1B || btnMinus1C)
+                        {
+                            if (customAirDensity > 0.00001f)
+                            {
+                                customAirDensity -= 0.00001f;
+                                customAirDensity = float.Parse(Math.Round(double.Parse(customAirDensity.ToString()), 5).ToString());
+                                btnMinus1B = false;
+                                btnMinus1C = false;
+                            }
+                            else
+                            {
+                                btnMinus1B = false;
+                                btnMinus1C = false;
+                            }
+                        }
+
+                        if (btnAdd1D || btnAdd1E)
+                        {
+                            customDragConstant += 0.001f;
+                            customDragConstant = float.Parse(Math.Round(double.Parse(customDragConstant.ToString()), 3).ToString());
+                            btnAdd1D = false;
+                            btnAdd1E = false;
+                        }
+
+                        if (btnMinus1D || btnMinus1E)
+                        {
+                            if (customDragConstant > 0.001f)
+                            {
+                                customDragConstant -= 0.001f;
+                                customDragConstant = float.Parse(Math.Round(double.Parse(customDragConstant.ToString()), 3).ToString());
+                                btnMinus1D = false;
+                                btnMinus1E = false;
+                            }
+                            else
+                            {
+                                btnMinus1D = false;
+                                btnMinus1E = false;
+                            }
+                        }
+
+                        if (prevChute)
+                        {
+                            if (chutePick == 0)
+                            {
+                                chutePick = 4;
+                            }
+                            else
+                            {
+                                chutePick -= 1;
+                            }
+                        }
+
+                        if (nextChute)
+                        {
+                            if (chutePick == 4)
+                            {
+                                chutePick = 0;
+                            }
+                            else
+                            {
+                                chutePick += 1;
+                            }
+                        }
 
 
+                        if (saveOptionsBtn)
+                        {
+
+                        }
 
 
                     }
@@ -493,8 +603,8 @@ namespace ParachutesLetsUseMaths
 
             GUI.Box(new Rect(0, 0, menuSize.x, menuSize.y), GUIContent.none);
 
-            closeBtn = GUI.Button(new Rect(menuSize.x - 35, 0, 35, 35), "X", styleBtn);
-            optionsBtn = GUI.Button(new Rect(menuSize.x - 70, 0, 35, 35), GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/plumOn", false), styleOptionBtn);
+            closeBtn = GUI.Button(new Rect(menuSize.x - 35, 0, 35, 35), closeTxt, styleBtn);
+            optionsBtn = GUI.Button(new Rect(menuSize.x - 70, 0, 35, 35), optionsTxt, styleOptionBtn);
 
                 GUI.Label(new Rect(50, 35, menuSize.x - 100, 25), "Select Celestial Body:", styleLabel);
                 celPick = GUI.SelectionGrid(new Rect(50, 70, menuSize.x - 100, 25), celPick, bodies, 5, styleToggle);
@@ -528,7 +638,7 @@ namespace ParachutesLetsUseMaths
 
             GUI.Label(new Rect(50, 35, optSize.x - 100, 25), "Surface Gravity, m/s2 = " + customGravVal.ToString(), styleLabel);
 
-            customGravVal = GUI.HorizontalSlider(new Rect(50, 80, optSize.x - 100, 25), customGravVal, 0, 30, new GUIStyle(HighLogic.Skin.horizontalSlider),
+            customGravVal = GUI.HorizontalSlider(new Rect(50, 70, optSize.x - 100, 25), customGravVal, 0, 30, new GUIStyle(HighLogic.Skin.horizontalSlider),
                     new GUIStyle(HighLogic.Skin.horizontalSliderThumb));
 
             if (GUI.changed)
@@ -536,9 +646,49 @@ namespace ParachutesLetsUseMaths
                 customGravVal = float.Parse(Math.Round(double.Parse(customGravVal.ToString()), 2).ToString());
             }
 
-            btnMinus1A = GUI.Button(new Rect(50, 115, 100, 25), "- 0.01");
-            btnAdd1A = GUI.Button(new Rect(150, 115, 100, 25), "+ 0.01");
+            btnMinus1A = GUI.Button(new Rect(50, 95, (optSize.x - 100) /2, 25), "- 0.01");
+            btnAdd1A = GUI.Button(new Rect(((optSize.x - 100) / 2) + 50, 95, (optSize.x - 100) / 2, 25), "+ 0.01");
 
+          
+            GUI.Label(new Rect(50, 140, optSize.x - 100, 25), "Air Density, kg/m3 = " + customAirDensity.ToString(), styleLabel);
+
+            customAirDensity = GUI.HorizontalSlider(new Rect(50, 175, optSize.x - 100, 25), customAirDensity, 0, 10, new GUIStyle(HighLogic.Skin.horizontalSlider),
+                    new GUIStyle(HighLogic.Skin.horizontalSliderThumb));
+
+            if (GUI.changed)
+            {
+                customAirDensity = float.Parse(Math.Round(double.Parse(customAirDensity.ToString()), 5).ToString());
+            }
+
+            btnMinus1B = GUI.RepeatButton(new Rect(50, 200, (optSize.x - 100) / 4, 25), "- Hold");
+            btnMinus1C = GUI.Button(new Rect(((optSize.x - 100) / 4) + 50, 200, (optSize.x - 100) / 4, 25), "- Single");
+            btnAdd1B = GUI.Button(new Rect((((optSize.x - 100) / 4) *2) + 50, 200, (optSize.x - 100) / 4, 25), "+ Single");
+            btnAdd1C = GUI.RepeatButton(new Rect((((optSize.x - 100) / 4) *3) + 50, 200, (optSize.x - 100) / 4, 25), "+ Hold");
+
+
+            GUI.Label(new Rect(50, 245, optSize.x - 100, 25), "Select Parachute: ", styleLabel);
+            prevChute = GUI.Button(new Rect(50, 270, (optSize.x - 100) / 2, 25), "Previous Chute");
+            nextChute = GUI.Button(new Rect(((optSize.x - 100) / 2) + 50, 270, (optSize.x - 100) / 2, 25), "Next Chute");
+
+
+            GUI.Label(new Rect(50, 310, optSize.x - 100, 25), "Parachute = " + chuteChoices[chutePick], styleLabel);
+            GUI.Label(new Rect(50, 335, optSize.x - 100, 25), "Stock Drag Constant, Cd = ", styleLabel);
+            GUI.Label(new Rect(50, 360, optSize.x - 100, 25), "Custom Drag Constant, Cd = " + customDragConstant.ToString(), styleLabel);
+
+            customDragConstant = GUI.HorizontalSlider(new Rect(50, 395, optSize.x - 100, 25), customDragConstant, 0, 1000, new GUIStyle(HighLogic.Skin.horizontalSlider),
+                    new GUIStyle(HighLogic.Skin.horizontalSliderThumb));
+
+            if (GUI.changed)
+            {
+                customDragConstant = float.Parse(Math.Round(double.Parse(customDragConstant.ToString()), 3).ToString());
+            }
+
+            btnMinus1D = GUI.RepeatButton(new Rect(50, 420, (optSize.x - 100) / 4, 25), "- Hold");
+            btnMinus1E = GUI.Button(new Rect(((optSize.x - 100) / 4) + 50, 420, (optSize.x - 100) / 4, 25), "- Single");
+            btnAdd1D = GUI.Button(new Rect((((optSize.x - 100) / 4) * 2) + 50, 420, (optSize.x - 100) / 4, 25), "+ Single");
+            btnAdd1E = GUI.RepeatButton(new Rect((((optSize.x - 100) / 4) * 3) + 50, 420, (optSize.x - 100) / 4, 25), "+ Hold");
+
+            saveOptionsBtn = GUI.Button(new Rect(100, 475, optSize.x - 200, 40), "Save/Close", styleBtn);
 
             GUI.DragWindow();
 
