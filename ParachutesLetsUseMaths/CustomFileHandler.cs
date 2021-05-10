@@ -8,25 +8,18 @@ using UnityEngine;
 namespace ParachutesLetsUseMaths
 {
     [KSPAddon(KSPAddon.Startup.EditorAny, false)]
-    public class PLUM : MonoBehaviour
+    public class CustomFileHandler : MonoBehaviour
     {
-
-        public static PLUM Instance;
-        public static GUIElements guiPlum = new GUIElements();
-        public PlumUtilities utils;
         public string dataDirectory;
         public int fileCount;
         public List<string> fileNames = new List<string>();
-        
+
 
 
         public void Start()
         {
             if (HighLogic.LoadedSceneIsEditor)
             {
-                Instance = this;
-                utils = new PlumUtilities();
-
                 dataDirectory = KSPUtil.ApplicationRootPath + "/GameData/FruitKocktail/PLUM/PluginData/";
 
                 fileCount = Directory.GetFiles(dataDirectory).Length - 1;
@@ -37,18 +30,22 @@ namespace ParachutesLetsUseMaths
                     {
                         fileNames.Add(Directory.GetFiles(dataDirectory)[x].ToString());
                     }
+                    
                 }
+                
 
 
 
             }
             else return;
-
-
         }
 
-        
 
+        public string CustomNameDefiner()
+        {
+            return fileCount == 0 ? "Custom 1" : fileNames[0];
+
+        }
 
     }
 }
