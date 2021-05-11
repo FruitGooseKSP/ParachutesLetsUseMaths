@@ -19,25 +19,15 @@ namespace ParachutesLetsUseMaths
         private List<string> custom8Entries = new List<string>();
         private List<string> custom9Entries = new List<string>();
 
-        private string[] trimChars =
-        {
-            "name=",
-            "gravity=",
-            "airDensity=",
-            "chute0=",
-            "chute1=",
-            "chute2=",
-            "chute3=",
-            "chute4=",
-        
+        public static CustomFileHandler customFileHandler;
 
-
-        };
+        public static CfgHandler Instance;
 
 
         public CfgHandler(List<string> _cfgData)
         {
-          
+
+            Instance = this;
             cfgData = _cfgData;
             SortData();
 
@@ -47,7 +37,6 @@ namespace ParachutesLetsUseMaths
         private void SortData()
         {
            
-
             if (cfgData[0] != "DATA")
             {
                 Debug.LogError("ERROR - PLUM : cfg file is not in the correct format!");
@@ -63,68 +52,62 @@ namespace ParachutesLetsUseMaths
 
             for (int y = 0; y < lineCount; y++)
             {
-                Debug.LogError("cfConfig[y] = " + cfgData[y]);
 
                 if (cfgData[y].Contains("id"))
                 {
-                    Debug.LogError("contains id");
-
-                    
+      
                     int posOfE = cfgData[y].IndexOf("=") + 1;
-                    string buildStr1 = cfgData[y].Substring(posOfE, 1);
+                    int posOfSC = cfgData[y].IndexOf(";");
+                    string buildStr1 = cfgData[y].Substring(posOfE, posOfSC - posOfE);
                     string string1 = buildStr1.Trim();
 
 
                     posOfE = cfgData[y + 1].IndexOf("=") + 1;
-                    int lengthOS = cfgData[y + 1].Length;
-                    Debug.LogError("lenthOS = " + lengthOS);
-                    buildStr1 = cfgData[y + 1].Substring(posOfE, lengthOS);
+                    posOfSC = cfgData[y + 1].IndexOf(";");
+                    buildStr1 = cfgData[y + 1].Substring(posOfE, posOfSC - posOfE);
                     string string2 = buildStr1.Trim();
 
                     
                     posOfE = cfgData[y + 2].IndexOf("=") + 1;
-                    buildStr1 = cfgData[y + 2].Substring(posOfE, 7);
+                    posOfSC = cfgData[y + 2].IndexOf(";");
+                    buildStr1 = cfgData[y + 2].Substring(posOfE, posOfSC - posOfE);
                     string string3 = buildStr1.Trim();
 
                    
                     posOfE = cfgData[y + 3].IndexOf("=") + 1;
-                    buildStr1 = cfgData[y + 3].Substring(posOfE, 7);
+                    posOfSC = cfgData[y + 3].IndexOf(";");
+                    buildStr1 = cfgData[y + 3].Substring(posOfE, posOfSC - posOfE);
                     string string4 = buildStr1.Trim();
 
                     
                     posOfE = cfgData[y + 4].IndexOf("=") + 1;
-                    buildStr1 = cfgData[y + 4].Substring(posOfE, 7);
+                    posOfSC = cfgData[y + 4].IndexOf(";");
+                    buildStr1 = cfgData[y + 4].Substring(posOfE, posOfSC - posOfE);
                     string string5 = buildStr1.Trim();
 
                    
                     posOfE = cfgData[y + 5].IndexOf("=") + 1;
-                    buildStr1 = cfgData[y + 5].Substring(posOfE, 7);
+                    posOfSC = cfgData[y + 5].IndexOf(";");
+                    buildStr1 = cfgData[y + 5].Substring(posOfE, posOfSC - posOfE);
                     string string6 = buildStr1.Trim();
 
                    
                     posOfE = cfgData[y + 6].IndexOf("=") + 1;
-                    buildStr1 = cfgData[y + 6].Substring(posOfE, 7);
+                    posOfSC = cfgData[y + 6].IndexOf(";");
+                    buildStr1 = cfgData[y + 6].Substring(posOfE, posOfSC - posOfE);
                     string string7 = buildStr1.Trim();
 
                    
                     posOfE = cfgData[y + 7].IndexOf("=") + 1;
-                    buildStr1 = cfgData[y + 7].Substring(posOfE, 7);
+                    posOfSC = cfgData[y + 7].IndexOf(";");
+                    buildStr1 = cfgData[y + 7].Substring(posOfE, posOfSC - posOfE);
                     string string8 = buildStr1.Trim();
 
                     
                     posOfE = cfgData[y + 8].IndexOf("=") + 1;
-                    buildStr1 = cfgData[y + 8].Substring(posOfE, 7);
+                    posOfSC = cfgData[y + 8].IndexOf(";");
+                    buildStr1 = cfgData[y + 8].Substring(posOfE, posOfSC - posOfE);
                     string string9 = buildStr1.Trim();
-
-                    Debug.LogError(string1);
-                    Debug.LogError(string2);
-                    Debug.LogError(string3);
-                    Debug.LogError(string4);
-                    Debug.LogError(string5);
-                    Debug.LogError(string6);
-                    Debug.LogError(string7);
-                    Debug.LogError(string8);
-                    Debug.LogError(string9);
 
 
                     string[] vals1 =
@@ -174,22 +157,12 @@ namespace ParachutesLetsUseMaths
                             break;
                     }
 
-                   
-
+                  
 
                 }
 
             }
 
-            Debug.Log("cust1 count = " + custom1Entries.Count);
-            Debug.Log("cust2 count = " + custom2Entries.Count);
-            Debug.Log("cust3 count = " + custom3Entries.Count);
-            Debug.Log("cust4 count = " + custom4Entries.Count);
-            Debug.Log("cust5 count = " + custom5Entries.Count);
-            Debug.Log("cust6 count = " + custom6Entries.Count);
-            Debug.Log("cust7 count = " + custom7Entries.Count);
-            Debug.Log("cust8 count = " + custom8Entries.Count);
-            Debug.Log("cust9 count = " + custom9Entries.Count);
 
         }
 
@@ -220,6 +193,29 @@ namespace ParachutesLetsUseMaths
 
                
             }
+
+
+
+        }
+
+        public void SaveProfile(int index, string name, float grav, float aD, float c0, float c1, float c2, float c3, float c4)
+        {
+            customFileHandler = CustomFileHandler.Instance;
+
+            string index2 = index.ToString();
+            string grav2 = grav.ToString();
+            string aD2 = aD.ToString();
+            string c02 = c0.ToString();
+            string c12 = c1.ToString();
+            string c22 = c2.ToString();
+            string c32 = c3.ToString();
+            string c42 = c4.ToString();
+
+            customFileHandler.SaveData(index2, name, grav2, aD2, c02, c12, c22, c32, c42);
+
+
+
+
 
 
 

@@ -143,7 +143,17 @@ namespace ParachutesLetsUseMaths
         public GUIStyle styleOptionBtn;
         public GUIStyle styleTextField;
 
-        public CustomFileHandler cfh = new CustomFileHandler();
+        public static CfgHandler cfgHandler;
+
+        public List<string> custom1List = new List<string>();
+        public List<string> custom2List = new List<string>();
+        public List<string> custom3List = new List<string>();
+        public List<string> custom4List = new List<string>();
+        public List<string> custom5List = new List<string>();
+        public List<string> custom6List = new List<string>();
+        public List<string> custom7List = new List<string>();
+        public List<string> custom8List = new List<string>();
+        public List<string> custom9List = new List<string>();
 
 
         public void Start()
@@ -234,7 +244,7 @@ namespace ParachutesLetsUseMaths
                     alignment = TextAnchor.MiddleCenter,
                 };
 
-                
+                PopulateLists();
                 
                 
 
@@ -355,6 +365,8 @@ namespace ParachutesLetsUseMaths
 
                         if (prevChute)
                         {
+                            prevChute = false;
+
                             if (chutePick == 0)
                             {
                                 chutePick = 4;
@@ -363,10 +375,14 @@ namespace ParachutesLetsUseMaths
                             {
                                 chutePick -= 1;
                             }
+
+                            ChuteHandler();
                         }
 
                         if (nextChute)
                         {
+                            nextChute = false;
+
                             if (chutePick == 4)
                             {
                                 chutePick = 0;
@@ -375,17 +391,21 @@ namespace ParachutesLetsUseMaths
                             {
                                 chutePick += 1;
                             }
+
+                            ChuteHandler();
                         }
 
                         if (prevFile)
                         {
+                            prevFile = false;
+
                             if (customFileSelection != 0)
                             {
                                 customFileSelection -= 1;
                             }
                             else
                             {
-                                customFileSelection = 9;
+                                customFileSelection = 8;
                             }
 
                             PopulateTheOptions();
@@ -393,7 +413,9 @@ namespace ParachutesLetsUseMaths
 
                         if (nextFile)
                         {
-                            if (customFileSelection != 9)
+                            nextFile = false;
+
+                            if (customFileSelection != 8)
                             {
                                 customFileSelection += 1;
                             }
@@ -408,7 +430,8 @@ namespace ParachutesLetsUseMaths
 
                         if (saveOptionsBtn)
                         {
-
+                            saveOptionsBtn = false;
+                            cfgHandler.SaveProfile(customFileSelection, customName, customGravVal, customAirDensity, chute0, chute1, chute2, chute3, chute4);
                         }
 
                         if (optCloseBtn)
@@ -435,6 +458,25 @@ namespace ParachutesLetsUseMaths
                 }
             }
         }
+
+        public void PopulateLists()
+        {
+            
+            cfgHandler = CfgHandler.Instance;
+            custom1List = cfgHandler.ReturnData(0);
+            custom2List = cfgHandler.ReturnData(1);
+            custom3List = cfgHandler.ReturnData(2);
+            custom4List = cfgHandler.ReturnData(3);
+            custom5List = cfgHandler.ReturnData(4);
+            custom6List = cfgHandler.ReturnData(5);
+            custom7List = cfgHandler.ReturnData(6);
+            custom8List = cfgHandler.ReturnData(7);
+            custom9List = cfgHandler.ReturnData(8);
+
+            PopulateTheOptions();
+        }
+
+
 
         // Gets the amount of chutes currently on our vessel
         public string GetParachuteQty()
@@ -680,13 +722,21 @@ namespace ParachutesLetsUseMaths
         public void OptionsWindow(int _windowID)
         {
             GUI.BeginGroup(new Rect(0, 0, optSize.x, optSize.y));
+
+            GUI.SetNextControlName("abc");
             GUI.Box(new Rect(0, 0, optSize.x, optSize.y), GUIContent.none);
 
             prevFile = GUI.Button(new Rect(50, 35, 50, 25), "<", styleBtn);
             nextFile = GUI.Button(new Rect(optSize.x - 100, 35, 50, 25), ">", styleBtn);
 
+            GUI.SetNextControlName("customNamePanel");
             customName = GUI.TextField(new Rect(100, 35, optSize.x - 200, 35), customName, styleTextField);
 
+            if ((Event.current.isKey && (Event.current.keyCode == KeyCode.KeypadEnter || Event.current.keyCode == KeyCode.Return) 
+                && GUI.GetNameOfFocusedControl() == "customNamePanel"))
+            {
+                GUI.FocusControl("abc");
+            }
 
             
 
@@ -840,17 +890,56 @@ namespace ParachutesLetsUseMaths
 
         public void PopulateTheOptions()
         {
-            CustomFileHandler cFH = new CustomFileHandler();
-            List<string> customElements = cFH.PopulationGetter(customFileSelection);
+            List<string> opList = new List<string>();
 
-            customName = customElements[1];
-            customGravVal = float.Parse(customElements[2]);
-            customAirDensity = float.Parse(customElements[3]);
-            chute0 = float.Parse(customElements[4]);
-            chute1 = float.Parse(customElements[5]);
-            chute2 = float.Parse(customElements[6]);
-            chute3 = float.Parse(customElements[7]);
-            chute4 = float.Parse(customElements[8]);
+
+            switch (customFileSelection)
+            {
+                case 0:
+                    opList = custom1List;
+                    break;
+                case 1:
+                    opList = custom2List;
+                    break;
+                case 2:
+                    opList = custom3List;
+                    break;
+                case 3:
+                    opList = custom4List;
+                    break;
+                case 4:
+                    opList = custom5List;
+                    break;
+                case 5:
+                    opList = custom6List;
+                    break;
+                case 6:
+                    opList = custom7List;
+                    break;
+                case 7:
+                    opList = custom8List;
+                    break;
+                case 8:
+                    opList = custom9List;
+                    break;
+                default:
+                    opList = null;
+                    break;
+            }
+
+            if (opList == null)
+            {
+                Debug.LogError("ERROR - PLUM : unable to determine pop list!");
+            }
+            
+            customName = opList[1];
+            customGravVal = float.Parse(opList[2]);
+            customAirDensity = float.Parse(opList[3]);
+            chute0 = float.Parse(opList[4]);
+            chute1 = float.Parse(opList[5]);
+            chute2 = float.Parse(opList[6]);
+            chute3 = float.Parse(opList[7]);
+            chute4 = float.Parse(opList[8]);
 
             switch (chutePick)
             {
@@ -863,16 +952,94 @@ namespace ParachutesLetsUseMaths
                 case 2:
                     customDragConstant = chute2;
                     break;
-                case 4:
+                case 3:
                     customDragConstant = chute3;
                     break;
-                case 5:
+                case 4:
                     customDragConstant = chute4;
                     break;
                 default:
                     Debug.LogError("ERROR : PLUM - unable to assign Custom Drag Profile!");
                     break;
             }
+
+
+        }
+
+        public void ChuteHandler()
+        {
+            List<string> opList = new List<string>();
+
+            switch (customFileSelection)
+            {
+                case 0:
+                    opList = custom1List;
+                    break;
+                case 1:
+                    opList = custom2List;
+                    break;
+                case 2:
+                    opList = custom3List;
+                    break;
+                case 3:
+                    opList = custom4List;
+                    break;
+                case 4:
+                    opList = custom5List;
+                    break;
+                case 5:
+                    opList = custom6List;
+                    break;
+                case 6:
+                    opList = custom7List;
+                    break;
+                case 7:
+                    opList = custom8List;
+                    break;
+                case 8:
+                    opList = custom9List;
+                    break;
+                default:
+                    opList = null;
+                    break;
+            }
+
+            if (opList == null)
+            {
+                Debug.LogError("ERROR - PLUM : unable to determine custom chute param list!");
+            }
+
+            chute0 = float.Parse(opList[4]);
+            chute1 = float.Parse(opList[5]);
+            chute2 = float.Parse(opList[6]);
+            chute3 = float.Parse(opList[7]);
+            chute4 = float.Parse(opList[8]);
+
+            switch (chutePick)
+            {
+                case 0:
+                    customDragConstant = chute0;
+                    break;
+                case 1:
+                    customDragConstant = chute1;
+                    break;
+                case 2:
+                    customDragConstant = chute2;
+                    break;
+                case 3:
+                    customDragConstant = chute3;
+                    break;
+                case 4:
+                    customDragConstant = chute4;
+                    break;
+                default:
+                    Debug.LogError("ERROR : PLUM - unable to assign Local Custom Chute Drag Profile!");
+                    break;
+            }
+
+
+
+
 
 
         }
