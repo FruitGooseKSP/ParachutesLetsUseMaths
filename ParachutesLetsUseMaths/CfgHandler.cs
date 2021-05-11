@@ -53,33 +53,79 @@ namespace ParachutesLetsUseMaths
                 Debug.LogError("ERROR - PLUM : cfg file is not in the correct format!");
             }
 
-            int lineCount = cfgData.Count - 1;
+            int lineCount = cfgData.Count;
 
             for (int x = 0; x < lineCount; x++)
             {
                 cfgData[x] = cfgData[x].Trim();
-            }
-
-            for (int a = 0; a < lineCount; a++)
-            {
-                Debug.LogError(cfgData[a]);
+                cfgData[x] = cfgData[x].Replace(" ", "");
             }
 
             for (int y = 0; y < lineCount; y++)
             {
-                if (cfgData[y].Contains("id"))
-                { 
-                    string idER = cfgData[y];
+                Debug.LogError("cfConfig[y] = " + cfgData[y]);
 
-                    string string1 = idER;
-                    string string2 = cfgData[y + 1].Substring(cfgData[y + 1].IndexOf("="), 10);
-                    string string3 = cfgData[y + 2].Substring(cfgData[y + 2].IndexOf("="), 7);
-                    string string4 = cfgData[y + 3].Substring(cfgData[y + 3].IndexOf("="), 7);
-                    string string5 = cfgData[y + 4].Substring(cfgData[y + 4].IndexOf("="), 7);
-                    string string6 = cfgData[y + 5].Substring(cfgData[y + 5].IndexOf("="), 7);
-                    string string7 = cfgData[y + 6].Substring(cfgData[y + 6].IndexOf("="), 7);
-                    string string8 = cfgData[y + 7].Substring(cfgData[y + 7].IndexOf("="), 7);
-                    string string9 = cfgData[y + 8].Substring(cfgData[y + 8].IndexOf("="), 7);
+                if (cfgData[y].Contains("id"))
+                {
+                    Debug.LogError("contains id");
+
+                    
+                    int posOfE = cfgData[y].IndexOf("=") + 1;
+                    string buildStr1 = cfgData[y].Substring(posOfE, 1);
+                    string string1 = buildStr1.Trim();
+
+
+                    posOfE = cfgData[y + 1].IndexOf("=") + 1;
+                    int lengthOS = cfgData[y + 1].Length;
+                    Debug.LogError("lenthOS = " + lengthOS);
+                    buildStr1 = cfgData[y + 1].Substring(posOfE, lengthOS);
+                    string string2 = buildStr1.Trim();
+
+                    
+                    posOfE = cfgData[y + 2].IndexOf("=") + 1;
+                    buildStr1 = cfgData[y + 2].Substring(posOfE, 7);
+                    string string3 = buildStr1.Trim();
+
+                   
+                    posOfE = cfgData[y + 3].IndexOf("=") + 1;
+                    buildStr1 = cfgData[y + 3].Substring(posOfE, 7);
+                    string string4 = buildStr1.Trim();
+
+                    
+                    posOfE = cfgData[y + 4].IndexOf("=") + 1;
+                    buildStr1 = cfgData[y + 4].Substring(posOfE, 7);
+                    string string5 = buildStr1.Trim();
+
+                   
+                    posOfE = cfgData[y + 5].IndexOf("=") + 1;
+                    buildStr1 = cfgData[y + 5].Substring(posOfE, 7);
+                    string string6 = buildStr1.Trim();
+
+                   
+                    posOfE = cfgData[y + 6].IndexOf("=") + 1;
+                    buildStr1 = cfgData[y + 6].Substring(posOfE, 7);
+                    string string7 = buildStr1.Trim();
+
+                   
+                    posOfE = cfgData[y + 7].IndexOf("=") + 1;
+                    buildStr1 = cfgData[y + 7].Substring(posOfE, 7);
+                    string string8 = buildStr1.Trim();
+
+                    
+                    posOfE = cfgData[y + 8].IndexOf("=") + 1;
+                    buildStr1 = cfgData[y + 8].Substring(posOfE, 7);
+                    string string9 = buildStr1.Trim();
+
+                    Debug.LogError(string1);
+                    Debug.LogError(string2);
+                    Debug.LogError(string3);
+                    Debug.LogError(string4);
+                    Debug.LogError(string5);
+                    Debug.LogError(string6);
+                    Debug.LogError(string7);
+                    Debug.LogError(string8);
+                    Debug.LogError(string9);
+
 
                     string[] vals1 =
                     {
@@ -94,33 +140,33 @@ namespace ParachutesLetsUseMaths
                         string9,
                     };
 
-                    switch (idER)
+                    switch (string1)
                     {
-                        case "id=1":
+                        case "1":
                             custom1Entries.AddRange(vals1);
                             break;
-                        case "id=2":
+                        case "2":
                             custom2Entries.AddRange(vals1);
                             break;
-                        case "id=3":
+                        case "3":
                             custom3Entries.AddRange(vals1);
                             break;
-                        case "id=4":
+                        case "4":
                             custom4Entries.AddRange(vals1);
                             break;
-                        case "id=5":
+                        case "5":
                             custom5Entries.AddRange(vals1);
                             break;
-                        case "id=6":
+                        case "6":
                             custom6Entries.AddRange(vals1);
                             break;
-                        case "id=7":
+                        case "7":
                             custom7Entries.AddRange(vals1);
                             break;
-                        case "id=8":
+                        case "8":
                             custom8Entries.AddRange(vals1);
                             break;
-                        case "id=9":
+                        case "9":
                             custom9Entries.AddRange(vals1);
                             break;
                         default:
