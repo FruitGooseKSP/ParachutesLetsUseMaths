@@ -12,6 +12,9 @@ namespace ParachutesLetsUseMaths
     {
         public string dataDirectory;
         public string fileName = "plumdata.cfg";
+        public string tempFileName = "plumdata.txt";
+        public string pathToData;
+        public string tempPathtoData;
         public List<string> cfgContents;
 
         private CfgHandler cfgHandler;
@@ -25,6 +28,9 @@ namespace ParachutesLetsUseMaths
                 try
                 {
                     dataDirectory = KSPUtil.ApplicationRootPath + "/GameData/FruitKocktail/PLUM/PluginData/";
+                    pathToData = dataDirectory + fileName;
+                    tempPathtoData = dataDirectory + tempFileName;
+                    
                 }
                 catch (Exception e)
                 {
@@ -32,19 +38,26 @@ namespace ParachutesLetsUseMaths
                 }
                 
 
-                if (File.Exists(dataDirectory + fileName))
+                if (File.Exists(pathToData))
                 {
-                    cfgContents = new List<string>(File.ReadAllLines(dataDirectory + fileName));
+                    FileInfo fileInfo = new FileInfo(pathToData);
+                    fileInfo.MoveTo(tempPathtoData);
+
+                    cfgContents = new List<string>(File.ReadAllLines(tempPathtoData));
+                   
                 }
                 else
                 {
                     Debug.LogError("ERROR - PLUM: Unable to find plumdata.cfg!");
                 }
 
-                Debug.LogError("list = " + cfgContents.Count);
+               
                 
                 if (cfgContents.Count != 0)
                 {
+                    FileInfo fileInfo2 = new FileInfo(tempPathtoData);
+                    fileInfo2.MoveTo(pathToData);
+
                     ProcessCfg();
                 }
 
@@ -55,6 +68,7 @@ namespace ParachutesLetsUseMaths
 
         public void ProcessCfg()
         {
+           
             cfgHandler = new CfgHandler(cfgContents);
 
         }

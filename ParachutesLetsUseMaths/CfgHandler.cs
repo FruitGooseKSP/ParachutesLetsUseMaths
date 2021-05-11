@@ -37,7 +37,7 @@ namespace ParachutesLetsUseMaths
 
         public CfgHandler(List<string> _cfgData)
         {
-
+          
             cfgData = _cfgData;
             SortData();
 
@@ -46,6 +46,8 @@ namespace ParachutesLetsUseMaths
 
         private void SortData()
         {
+           
+
             if (cfgData[0] != "DATA")
             {
                 Debug.LogError("ERROR - PLUM : cfg file is not in the correct format!");
@@ -55,16 +57,19 @@ namespace ParachutesLetsUseMaths
 
             for (int x = 0; x < lineCount; x++)
             {
-                cfgData[x].Trim();
+                cfgData[x] = cfgData[x].Trim();
+            }
+
+            for (int a = 0; a < lineCount; a++)
+            {
+                Debug.LogError(cfgData[a]);
             }
 
             for (int y = 0; y < lineCount; y++)
             {
-                if (cfgData[y].Contains("id=1") || cfgData[y].Contains("id=2") || cfgData[y].Contains("id=3") || cfgData[y].Contains("id=4") ||
-                    cfgData[y].Contains("id=5") || cfgData[y].Contains("id=6") || cfgData[y].Contains("id=7") || cfgData[y].Contains("id=8") ||
-                    cfgData[y].Contains("id=9"))
+                if (cfgData[y].Contains("id"))
                 { 
-                    string idER = cfgData[y].Substring(cfgData[y].IndexOf("="), 1);
+                    string idER = cfgData[y];
 
                     string string1 = idER;
                     string string2 = cfgData[y + 1].Substring(cfgData[y + 1].IndexOf("="), 10);
@@ -91,31 +96,31 @@ namespace ParachutesLetsUseMaths
 
                     switch (idER)
                     {
-                        case "1":
+                        case "id=1":
                             custom1Entries.AddRange(vals1);
                             break;
-                        case "2":
+                        case "id=2":
                             custom2Entries.AddRange(vals1);
                             break;
-                        case "3":
+                        case "id=3":
                             custom3Entries.AddRange(vals1);
                             break;
-                        case "4":
+                        case "id=4":
                             custom4Entries.AddRange(vals1);
                             break;
-                        case "5":
+                        case "id=5":
                             custom5Entries.AddRange(vals1);
                             break;
-                        case "6":
+                        case "id=6":
                             custom6Entries.AddRange(vals1);
                             break;
-                        case "7":
+                        case "id=7":
                             custom7Entries.AddRange(vals1);
                             break;
-                        case "8":
+                        case "id=8":
                             custom8Entries.AddRange(vals1);
                             break;
-                        case "9":
+                        case "id=9":
                             custom9Entries.AddRange(vals1);
                             break;
                         default:
@@ -123,12 +128,22 @@ namespace ParachutesLetsUseMaths
                             break;
                     }
 
-
+                   
 
 
                 }
 
             }
+
+            Debug.Log("cust1 count = " + custom1Entries.Count);
+            Debug.Log("cust2 count = " + custom2Entries.Count);
+            Debug.Log("cust3 count = " + custom3Entries.Count);
+            Debug.Log("cust4 count = " + custom4Entries.Count);
+            Debug.Log("cust5 count = " + custom5Entries.Count);
+            Debug.Log("cust6 count = " + custom6Entries.Count);
+            Debug.Log("cust7 count = " + custom7Entries.Count);
+            Debug.Log("cust8 count = " + custom8Entries.Count);
+            Debug.Log("cust9 count = " + custom9Entries.Count);
 
         }
 
