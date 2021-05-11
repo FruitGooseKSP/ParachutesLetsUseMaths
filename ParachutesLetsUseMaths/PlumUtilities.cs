@@ -156,6 +156,30 @@ namespace ParachutesLetsUseMaths
 
         }
 
+        public float FetchDragDefault(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return 552.296f;
+                case 1:
+                    return 410.682f;
+                case 2:
+                    return 800.829f;
+                case 3:
+                    return 14.574f;
+                case 4:
+                    return 15.039f;
+                default:
+                    return 552.296f;
+
+            }
+
+
+
+
+        }
+
         public double GetMulti(int planet, int chute, int count)
         {
             // if there are multiple chutes, the formula is slightly different as there is a bonus for using radial chutes in symmetry.

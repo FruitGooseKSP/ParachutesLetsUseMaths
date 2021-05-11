@@ -19,6 +19,9 @@ namespace ParachutesLetsUseMaths
         [KSPField(isPersistant = true)]
         public static int calcPick;
 
+        [KSPField(isPersistant = true)]
+        public static int customFileSelection = 0;
+
         public static int chutePick = 0;
 
         public static float customGravVal = 0.01f;
@@ -78,6 +81,12 @@ namespace ParachutesLetsUseMaths
 
         public string gravityCustom;
 
+        public static float chute0;
+        public static float chute1;
+        public static float chute2;
+        public static float chute3;
+        public static float chute4;
+
         // menu name holders
         public static Rect guiPos;
         public Vector2 menuPosition;
@@ -134,6 +143,8 @@ namespace ParachutesLetsUseMaths
         public GUIStyle styleOptionBtn;
         public GUIStyle styleTextField;
 
+        public CustomFileHandler cfh = new CustomFileHandler();
+
 
         public void Start()
         {
@@ -172,14 +183,7 @@ namespace ParachutesLetsUseMaths
 
                 btnIsPresent = true;
 
-
-                if (calcPick == 0)
-                {
-                    calcPick = 8;
-                }
-
-            //    customName = PLUM.StartingName();
-               
+                calcPick = calcPick == 0 ? 8 : calcPick;
 
                 // define our custom styles
 
@@ -375,12 +379,30 @@ namespace ParachutesLetsUseMaths
 
                         if (prevFile)
                         {
+                            if (customFileSelection != 0)
+                            {
+                                customFileSelection -= 1;
+                            }
+                            else
+                            {
+                                customFileSelection = 9;
+                            }
 
+                            PopulateTheOptions();
                         }
 
-                        if (nextChute)
+                        if (nextFile)
                         {
+                            if (customFileSelection != 9)
+                            {
+                                customFileSelection += 1;
+                            }
+                            else
+                            {
+                                customFileSelection = 0;
+                            }
 
+                            PopulateTheOptions();
                         }
 
 
@@ -622,6 +644,7 @@ namespace ParachutesLetsUseMaths
         // GUI Menu Window
         public void MenuWindow(int WindowID)
         {
+
             GUI.BeginGroup(new Rect(0, 0, menuSize.x, menuSize.y));
 
             GUI.Box(new Rect(0, 0, menuSize.x, menuSize.y), GUIContent.none);
@@ -703,8 +726,8 @@ namespace ParachutesLetsUseMaths
 
 
             GUI.Label(new Rect(50, 355, optSize.x - 100, 25), "Parachute = " + chuteChoices[chutePick], styleLabel);
-            GUI.Label(new Rect(50, 380, optSize.x - 100, 25), "Stock Drag Constant, Cd = ", styleLabel);
-            GUI.Label(new Rect(50, 405, optSize.x - 100, 25), "Custom Drag Constant, Cd = " + customDragConstant.ToString(), styleLabel);
+            GUI.Label(new Rect(50, 380, optSize.x - 100, 25), "Stock Drag Constant, Cd = " + pUtils.FetchDragDefault(chutePick), styleLabel);
+            GUI.Label(new Rect(50, 405, optSize.x - 100, 25), "Custom Drag Constant, Cd = " + customDragConstant, styleLabel);
 
             customDragConstant = GUI.HorizontalSlider(new Rect(50, 440, optSize.x - 100, 25), customDragConstant, 0, 1000, new GUIStyle(HighLogic.Skin.horizontalSlider),
                     new GUIStyle(HighLogic.Skin.horizontalSliderThumb));
@@ -761,9 +784,7 @@ namespace ParachutesLetsUseMaths
             }
             if (btnIsPressed && optionsPressed)
             {
-                CustomFileHandler cFH = new CustomFileHandler();
-                customName = cFH.CustomNameDefiner();
-                ShowOptionsWindow();
+                    ShowOptionsWindow();   
             }
             
 
@@ -813,6 +834,46 @@ namespace ParachutesLetsUseMaths
             ApplicationLauncher.Instance.RemoveModApplication(plumBtn);
             plumBtn = null;
             btnIsPresent = false;
+
+        }
+
+
+        public void PopulateTheOptions()
+        {
+            CustomFileHandler cFH = new CustomFileHandler();
+            List<string> customElements = cFH.PopulationGetter(customFileSelection);
+
+            customName = customElements[1];
+            customGravVal = float.Parse(customElements[2]);
+            customAirDensity = float.Parse(customElements[3]);
+            chute0 = float.Parse(customElements[4]);
+            chute1 = float.Parse(customElements[5]);
+            chute2 = float.Parse(customElements[6]);
+            chute3 = float.Parse(customElements[7]);
+            chute4 = float.Parse(customElements[8]);
+
+            switch (chutePick)
+            {
+                case 0:
+                    customDragConstant = chute0;
+                    break;
+                case 1:
+                    customDragConstant = chute1;
+                    break;
+                case 2:
+                    customDragConstant = chute2;
+                    break;
+                case 4:
+                    customDragConstant = chute3;
+                    break;
+                case 5:
+                    customDragConstant = chute4;
+                    break;
+                default:
+                    Debug.LogError("ERROR : PLUM - unable to assign Custom Drag Profile!");
+                    break;
+            }
+
 
         }
 

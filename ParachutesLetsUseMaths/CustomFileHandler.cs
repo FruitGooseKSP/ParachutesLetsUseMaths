@@ -11,8 +11,10 @@ namespace ParachutesLetsUseMaths
     public class CustomFileHandler : MonoBehaviour
     {
         public string dataDirectory;
-        public int fileCount;
-        public List<string> fileNames = new List<string>();
+        public string fileName = "plumdata.cfg";
+        public List<string> cfgContents;
+
+        private CfgHandler cfgHandler;
 
 
 
@@ -20,32 +22,60 @@ namespace ParachutesLetsUseMaths
         {
             if (HighLogic.LoadedSceneIsEditor)
             {
-                dataDirectory = KSPUtil.ApplicationRootPath + "/GameData/FruitKocktail/PLUM/PluginData/";
-
-                fileCount = Directory.GetFiles(dataDirectory).Length - 1;
-
-                if (fileCount != 0)
+                try
                 {
-                    for (int x = 0; x < fileCount; x++)
-                    {
-                        fileNames.Add(Directory.GetFiles(dataDirectory)[x].ToString());
-                    }
-                    
+                    dataDirectory = KSPUtil.ApplicationRootPath + "/GameData/FruitKocktail/PLUM/PluginData/";
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("ERROR - PLUM: Unable to detect PluginData directory!");
                 }
                 
 
+                if (File.Exists(dataDirectory + fileName))
+                {
+                    cfgContents = new List<string>(File.ReadAllLines(dataDirectory + fileName));
+                }
+                else
+                {
+                    Debug.LogError("ERROR - PLUM: Unable to find plumdata.cfg!");
+                }
+
+                Debug.LogError("list = " + cfgContents.Count);
+                
+                if (cfgContents.Count != 0)
+                {
+                    ProcessCfg();
+                }
 
 
             }
             else return;
         }
 
-
-        public string CustomNameDefiner()
+        public void ProcessCfg()
         {
-            return fileCount == 0 ? "Custom 1" : fileNames[0];
+            cfgHandler = new CfgHandler(cfgContents);
 
         }
+
+        public string CustomNameDefiner(int index)
+        {
+            List<string> grabbedList = cfgHandler.ReturnData(index);
+
+            return grabbedList[1];
+
+        }
+
+        public List<string> PopulationGetter(int index)
+        {
+            List<string> grabbedList = cfgHandler.ReturnData(index);
+
+            return grabbedList;
+        }
+
+
+        
 
     }
 }
