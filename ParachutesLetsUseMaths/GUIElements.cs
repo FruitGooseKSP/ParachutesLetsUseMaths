@@ -582,8 +582,14 @@ namespace ParachutesLetsUseMaths
                                     paraCode = 0;
                                     break;
                             }
-
-                            runningTotal = pUtils.BCodeBase(celPick, paraCode);
+                            if (celPick != 4)
+                            {
+                                runningTotal = pUtils.BCodeBase(celPick, paraCode);
+                            }
+                            else
+                            {
+                                runningTotal = pUtils.GetSingleCustomB(paraCode);
+                            }
                         }
                     }
 
@@ -710,13 +716,14 @@ namespace ParachutesLetsUseMaths
                 new GUIStyle(HighLogic.Skin.horizontalSliderThumb));
 
             GUI.Label(new Rect(50, 225, menuSize.x - 100, 25), "Calculations", styleLabel);
-            GUI.Box(new Rect(50, 250, menuSize.x - 100, 200), GUIContent.none, styleBox);
+            GUI.Box(new Rect(50, 250, menuSize.x - 100, 225), GUIContent.none, styleBox);
             GUI.Label(new Rect(75, 275, menuSize.x - 150, 25), "Parachute Quantity = " + GetParachuteQty(), styleLabel2);
             GUI.Label(new Rect(75, 300, menuSize.x - 150, 25), "Vessel (Wet) Mass, Kg = " + GetVesselMass(), styleLabel2);
-            GUI.Label(new Rect(75, 325, menuSize.x - 150, 25), "Atomospheric Pressure, kPa = " + GetATD(), styleLabel2);
-            GUI.Label(new Rect(75, 350, menuSize.x - 150, 25), "Surface Gravity, m/s2 = " + GetSurfaceGravity(), styleLabel2);
-            GUI.Label(new Rect(75, 375, menuSize.x - 150, 25), "Parachute Magnitude Factor, bPmf = " + GetBValue(), styleLabel2);
-            GUI.Label(new Rect(75, 400, menuSize.x - 150, 25), "Approximate Touchdown Velocity, m/s = " + GetTDVelocity(), styleLabel3);
+            GUI.Label(new Rect(75, 325, menuSize.x - 150, 25), "Planetary Profile = " + GetPlanetProfile(), styleLabel2);
+            GUI.Label(new Rect(75, 350, menuSize.x - 150, 25), "Air Density, Kg/m3 = " + GetATD(), styleLabel2);
+            GUI.Label(new Rect(75, 375, menuSize.x - 150, 25), "Surface Gravity, m/s2 = " + GetSurfaceGravity(), styleLabel2);
+            GUI.Label(new Rect(75, 400, menuSize.x - 150, 25), "Parachute Magnitude Factor, bPmf = " + GetBValue(), styleLabel2);
+            GUI.Label(new Rect(75, 425, menuSize.x - 150, 25), "Approximate Touchdown Velocity, m/s = " + GetTDVelocity(), styleLabel3);
 
 
             GUI.DragWindow();
@@ -1039,6 +1046,11 @@ namespace ParachutesLetsUseMaths
 
         }
 
+
+        public static string GetPlanetProfile()
+        {
+            return celPick != 4 ? bodies[celPick] : "Custom Profile (" + customName + ")";
+        }
 
 
     }
