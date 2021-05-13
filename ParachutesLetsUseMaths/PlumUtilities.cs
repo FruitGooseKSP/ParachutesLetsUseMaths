@@ -176,8 +176,6 @@ namespace ParachutesLetsUseMaths
             }
 
 
-
-
         }
 
         public double GetMulti(int planet, int chute, int count)

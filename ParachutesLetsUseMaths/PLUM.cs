@@ -14,8 +14,6 @@ namespace ParachutesLetsUseMaths
         public static PLUM Instance;
         public static GUIElements guiPlum = new GUIElements();
         public PlumUtilities utils;
-        
-        
 
 
         public void Start()
@@ -25,17 +23,13 @@ namespace ParachutesLetsUseMaths
                 Instance = this;
                 utils = new PlumUtilities();
 
-                
-
-
-
             }
             else return;
 
 
         }
 
-        
+
 
 
     }

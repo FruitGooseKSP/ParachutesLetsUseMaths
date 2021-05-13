@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="CfgHandler.cs" />
     <Compile Include="CustomFileHandler.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GUIElements.cs" />
     <Compile Include="PLUM.cs" />
     <Compile Include="PlumUtilities.cs" />
