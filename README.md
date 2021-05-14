@@ -24,7 +24,7 @@ INSTRUCTIONS
 
 NOTES
 
-- the game gives a bonus for using radial chutes in symmetry. PLUM checks this in a very basic way (checking if the number of chutes is even). Therefore you should always apply     radial chutes in multiples of 2 or the bonus will not be taken into account and give an incorrect prediction. This may be addressed in future updates.
+- the game gives a bonus for using radial chutes in symmetry. This is not directly editable, however can be indirectly edited through the options.
 - Although fairly accurate for single chutes on basic vessels, you can expect an error of around 10% when using multiple chutes or mixing and matching chutes. This is due to         variances in drag of parts, pressures and a hidden stock modifier.
 - Although reasonably accurate (dispite the potential error described above) PLUM is intended as a guide only! The manufacturer accepts no responsibilty for vessels being           destroyed though incorrect calculation. USE AT YOUR OWN RISK!!
 
