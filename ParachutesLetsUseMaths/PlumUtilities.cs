@@ -123,12 +123,12 @@ namespace ParachutesLetsUseMaths
                     break;
             }
 
-            double custGrav = (double)GUIElements.customGravVal;
-            double custAD = (double)GUIElements.customAirDensity;
+            double custGrav = GUIElements.customGravVal;
+            double custAD = GUIElements.customAirDensity;
 
             // B = (2 * g) / ( p * Cd)
 
-            double toReturn = (2 * custGrav) / (custAD * tempHol);
+            double toReturn = Math.Round((2 * custGrav) / (custAD * tempHol), 4);
 
             return toReturn;
 
@@ -204,15 +204,15 @@ namespace ParachutesLetsUseMaths
             switch (index)
             {
                 case 0:
-                    return 552.296f;
+                    return 482.427f;
                 case 1:
-                    return 410.682f;
+                    return 431.714f;
                 case 2:
-                    return 800.829f;
+                    return 696.373f;
                 case 3:
-                    return 14.574f;
+                    return 11.691f;
                 case 4:
-                    return 15.039f;
+                    return 12.527f;
                 default:
                     return 552.296f;
 
@@ -223,7 +223,7 @@ namespace ParachutesLetsUseMaths
 
         private bool InSymmetry(int _chute)
         {
-            
+
             string chuteName;
 
             switch (_chute)
@@ -250,12 +250,17 @@ namespace ParachutesLetsUseMaths
             }
 
             return false;
-            
+
         }
 
         public double GetMulti(int planet, int chute, int count)
         {
-            
+            // if there are multiple chutes, the formula is slightly different as there is a bonus for using radial chutes in symmetry.
+            // this was originally calculated as a 1.5 bonus (as opposed to standard 1) however this doesn't work anymore/with enough accuracy.
+            // As a compromise I've settled on 1.525 although this isn't 100% either. Unfortunately unless the offical details are released by
+            // squad, it is near impossibe to calculate exactly.
+
+
             if (planet == 0)
             {
                 if (chute == 0 || chute == 2 || chute == 3)
@@ -264,15 +269,7 @@ namespace ParachutesLetsUseMaths
                 }
                 else
                 {
-                    if (!InSymmetry(chute))
-                    {
-                        return count / bValsK[chute];
-                    }
-                    else
-                    {
-                        return Math.Pow(count, 1.525) / bValsK[chute];
-                    }
-                    
+                    return !InSymmetry(chute) ? count / bValsK[chute] : Math.Pow(count, 1.525) / bValsK[chute];
                 }
             }
             else if (planet == 1)
@@ -352,38 +349,7 @@ namespace ParachutesLetsUseMaths
 
         }
 
-     /*   public double GetMulti(int planet, int chute, int count)
-        {
-            // if there are multiple chutes, the formula is slightly different as there is a bonus for using radial chutes in symmetry.
-            // this was originally calculated as a 1.5 bonus (as opposed to standard 1) however this doesn't work anymore/with enough accuracy.
-            // As a compromise I've settled on 1.525 although this isn't 100% either. Unfortunately unless the offical details are released by
-            // squad, it is near impossibe to calculate exactly.
-            // To check whether radial chutes are in symmetry I've used a simple "is it divisable by 2" (ie an even number). This is of course
-            // flawed as a player could technically put radial chutes in even numbers without being in symmetry but the hundreds of possibilites
-            // aren't worth coding for the 1 in a million chance that might happen. Perhaps we could say the player is punished for such a ridiculous design!
 
-            double toReturn;
-
-            switch (planet)
-            {
-                case 0:
-                    toReturn = chute == 0 || chute == 2 || chute == 3 ? count / bValsK[chute] : count % 2 == 0 ? Math.Pow(count, 1.525) / bValsK[chute] : count / bValsK[chute];
-                    break;
-                case 1:
-                    toReturn = chute == 0 || chute == 2 || chute == 3 ? count / bValsE[chute] : count % 2 == 0 ? Math.Pow(count, 1.525) / bValsE[chute] : count / bValsE[chute];
-                    break;
-                case 2:
-                    toReturn = chute == 0 || chute == 2 || chute == 3 ? count / bValsD[chute] : count % 2 == 0 ? Math.Pow(count, 1.525) / bValsD[chute] : count / bValsD[chute];
-                    break;
-                default:
-                    toReturn = chute == 0 || chute == 2 || chute == 3 ? count / bValsL[chute] : count % 2 == 0 ? Math.Pow(count, 1.525) / bValsL[chute] : count / bValsL[chute];
-                    break;
-
-            }
-
-            return toReturn;
-
-        } */
 
 
     }

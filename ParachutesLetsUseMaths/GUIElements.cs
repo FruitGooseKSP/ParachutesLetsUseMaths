@@ -32,7 +32,7 @@ namespace ParachutesLetsUseMaths
         // custom options
         public static float customGravVal = 0.01f;
         public static float customAirDensity = 1.22498f;
-        public static float customDragConstant = 552.296f;
+        public static float customDragConstant = 482.427f;
         public static string customName;
         public string gravityCustom;
         public static float chute0;
@@ -70,6 +70,9 @@ namespace ParachutesLetsUseMaths
 
         // options save button
         public static bool saveOptionsBtn;
+
+        // save status for save button
+        public static string saveStatus = "Saved";
 
         // options close button
         public static bool optCloseBtn;
@@ -225,7 +228,7 @@ namespace ParachutesLetsUseMaths
                 };
                 styleToggle = new GUIStyle(HighLogic.Skin.toggle)
                 {
-                    margin = new RectOffset(75, 75, 25, 25),
+                    margin = new RectOffset(100, 100, 25, 25),
                     stretchWidth = true,
                 };
                 styleToggle2 = new GUIStyle(HighLogic.Skin.toggle)
@@ -356,6 +359,7 @@ namespace ParachutesLetsUseMaths
                         {
                             customDragConstant += 0.001f;
                             customDragConstant = float.Parse(Math.Round(double.Parse(customDragConstant.ToString()), 3).ToString());
+                            SetChuteNewVal();
                             btnAdd1D = false;
                             btnAdd1E = false;
                         }
@@ -366,6 +370,7 @@ namespace ParachutesLetsUseMaths
                             {
                                 customDragConstant -= 0.001f;
                                 customDragConstant = float.Parse(Math.Round(double.Parse(customDragConstant.ToString()), 3).ToString());
+                                SetChuteNewVal();
                                 btnMinus1D = false;
                                 btnMinus1E = false;
                             }
@@ -414,6 +419,7 @@ namespace ParachutesLetsUseMaths
                         if (prevFile)
                         {
                             prevFile = false;
+                            saveStatus = "Saved";
 
                             if (customFileSelection != 0)
                             {
@@ -430,6 +436,7 @@ namespace ParachutesLetsUseMaths
                         if (nextFile)
                         {
                             nextFile = false;
+                            saveStatus = "Saved";
 
                             if (customFileSelection != 8)
                             {
@@ -448,6 +455,7 @@ namespace ParachutesLetsUseMaths
                         {
                             saveOptionsBtn = false;
                             cfgHandler.SaveProfile(customFileSelection, customName, customGravVal, customAirDensity, chute0, chute1, chute2, chute3, chute4);
+                            saveStatus = "Saved";
 
                         }
 
@@ -582,14 +590,9 @@ namespace ParachutesLetsUseMaths
                                     paraCode = 0;
                                     break;
                             }
-                            if (celPick != 4)
-                            {
-                                runningTotal = pUtils.BCodeBase(celPick, paraCode);
-                            }
-                            else
-                            {
-                                runningTotal = pUtils.GetSingleCustomB(paraCode);
-                            }
+
+                            runningTotal = celPick != 4 ? pUtils.BCodeBase(celPick, paraCode) : pUtils.GetSingleCustomB(paraCode);
+                            
                         }
                     }
 
@@ -750,7 +753,7 @@ namespace ParachutesLetsUseMaths
                 && GUI.GetNameOfFocusedControl() == "customNamePanel"))
             {
                 GUI.FocusControl("abc");
-
+                saveStatus = "UNSAVED*";
             }
 
             GUI.Label(new Rect(50, 80, optSize.x - 100, 25), "Surface Gravity, m/s2 = " + customGravVal, styleLabel);
@@ -761,6 +764,7 @@ namespace ParachutesLetsUseMaths
             if (GUI.changed)
             {
                 customGravVal = float.Parse(Math.Round(double.Parse(customGravVal.ToString()), 2).ToString());
+                saveStatus = "UNSAVED*";
             }
 
             btnMinus1A = GUI.Button(new Rect(50, 140, (optSize.x - 100) / 2, 25), "- 0.01");
@@ -775,6 +779,7 @@ namespace ParachutesLetsUseMaths
             if (GUI.changed)
             {
                 customAirDensity = float.Parse(Math.Round(double.Parse(customAirDensity.ToString()), 5).ToString());
+                saveStatus = "UNSAVED*";
             }
 
             btnMinus1B = GUI.RepeatButton(new Rect(50, 245, (optSize.x - 100) / 4, 25), "- Hold");
@@ -787,7 +792,7 @@ namespace ParachutesLetsUseMaths
             nextChute = GUI.Button(new Rect(((optSize.x - 100) / 2) + 50, 315, (optSize.x - 100) / 2, 25), "Next Chute");
 
             GUI.Label(new Rect(50, 355, optSize.x - 100, 25), "Parachute = " + chuteChoices[chutePick], styleLabel);
-            GUI.Label(new Rect(50, 380, optSize.x - 100, 25), "Stock Drag Constant, Cd = " + pUtils.FetchDragDefault(chutePick), styleLabel);
+            GUI.Label(new Rect(50, 380, optSize.x - 100, 25), "Stock Drag Constant (Kerbin), Cd = " + pUtils.FetchDragDefault(chutePick), styleLabel);
             GUI.Label(new Rect(50, 405, optSize.x - 100, 25), "Custom Drag Constant, Cd = " + customDragConstant, styleLabel);
 
             customDragConstant = GUI.HorizontalSlider(new Rect(50, 440, optSize.x - 100, 25), customDragConstant, 0, 1000, new GUIStyle(HighLogic.Skin.horizontalSlider),
@@ -796,6 +801,8 @@ namespace ParachutesLetsUseMaths
             if (GUI.changed)
             {
                 customDragConstant = float.Parse(Math.Round(double.Parse(customDragConstant.ToString()), 3).ToString());
+                SetChuteNewVal();
+                saveStatus = "UNSAVED*";
             }
 
             btnMinus1D = GUI.RepeatButton(new Rect(50, 465, (optSize.x - 100) / 4, 25), "- Hold");
@@ -803,7 +810,7 @@ namespace ParachutesLetsUseMaths
             btnAdd1D = GUI.Button(new Rect((((optSize.x - 100) / 4) * 2) + 50, 465, (optSize.x - 100) / 4, 25), "+ Single");
             btnAdd1E = GUI.RepeatButton(new Rect((((optSize.x - 100) / 4) * 3) + 50, 465, (optSize.x - 100) / 4, 25), "+ Hold");
 
-            saveOptionsBtn = GUI.Button(new Rect(50, 500, (optSize.x - 100) / 2, 40), "Save Custom", styleBtn);
+            saveOptionsBtn = GUI.Button(new Rect(50, 500, (optSize.x - 100) / 2, 40), saveStatus, styleBtn);
             optCloseBtn = GUI.Button(new Rect(((optSize.x - 100) / 2) + 50, 500, (optSize.x - 100) / 2, 40), "Close", styleBtn);
 
             GUI.DragWindow();
@@ -1046,10 +1053,38 @@ namespace ParachutesLetsUseMaths
 
         }
 
-
+        // gets profile message
         public static string GetPlanetProfile()
         {
             return celPick != 4 ? bodies[celPick] : "Custom Profile (" + customName + ")";
+        }
+
+        // allows live update of chute value/touch down velocity
+        public static void SetChuteNewVal()
+        {
+            switch (chutePick)
+            {
+                case 0:
+                    chute0 = customDragConstant;
+                    break;
+                case 1:
+                    chute1 = customDragConstant;
+                    break;
+                case 2:
+                    chute2 = customDragConstant;
+                    break;
+                case 3:
+                    chute3 = customDragConstant;
+                    break;
+                case 4:
+                    chute4 = customDragConstant;
+                    break;
+                default:
+                    break;
+            }
+
+
+
         }
 
 

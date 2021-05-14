@@ -10,7 +10,10 @@ namespace ParachutesLetsUseMaths
     [KSPAddon(KSPAddon.Startup.EditorAny, false)]
     public class CustomFileHandler : MonoBehaviour
     {
+        // KSP directory reference
         public string dataDirectory;
+
+        // filename references
         public string fileName = "data.plum";
         public string tempFileName = "data.txt";
         public string pathToData;
@@ -29,6 +32,7 @@ namespace ParachutesLetsUseMaths
 
                 try
                 {
+                    // set all paths assuming they exist
                     dataDirectory = KSPUtil.ApplicationRootPath + "/GameData/FruitKocktail/PLUM/PluginData/";
                     pathToData = dataDirectory + fileName;
                     tempPathtoData = dataDirectory + tempFileName;
@@ -45,6 +49,7 @@ namespace ParachutesLetsUseMaths
             else return;
         }
 
+        // import the data...
         public void ImportDataFromFile()
         {
             if (File.Exists(pathToData))
@@ -77,19 +82,21 @@ namespace ParachutesLetsUseMaths
             }
         }
 
+        // send imported data to Handler
         public void ProcessCfg()
         {
             Instance = this;
             cfgHandler = new CfgHandler(cfgContents);
         }
 
+        // send new saved data to Handler
         public void ReProcess()
         {
             cfgHandler = CfgHandler.Instance;
             cfgHandler.RefreshData(cfgContents);
         }
 
-
+        // physically ammend and save the data
         public void SaveData(string id, string name, string grav, string aD, string c0, string c1, string c2, string c3, string c4)
         {
             FileInfo fileInfo = new FileInfo(pathToData);
@@ -146,10 +153,7 @@ namespace ParachutesLetsUseMaths
                             cfgContents[x + 8] = cfgContents[x + 8].Replace(selection, c4);
 
                         }
-
                     }
-
-
                 }
 
                 File.WriteAllText(tempPathtoData, string.Empty);
@@ -158,7 +162,6 @@ namespace ParachutesLetsUseMaths
                 ImportDataFromFile();
 
             }
-
         }
 
 

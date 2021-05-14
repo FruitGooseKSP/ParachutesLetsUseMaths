@@ -9,6 +9,8 @@ namespace ParachutesLetsUseMaths
     public class CfgHandler
     {
         private List<string> cfgData;
+
+        // list of custom entries per profile
         private List<string> custom1Entries = new List<string>();
         private List<string> custom2Entries = new List<string>();
         private List<string> custom3Entries = new List<string>();
@@ -19,10 +21,11 @@ namespace ParachutesLetsUseMaths
         private List<string> custom8Entries = new List<string>();
         private List<string> custom9Entries = new List<string>();
 
+        // static instances
         public static CustomFileHandler customFileHandler;
         public static CfgHandler Instance;
 
-
+        // main
         public CfgHandler(List<string> _cfgData)
         {
             Instance = this;
@@ -30,7 +33,7 @@ namespace ParachutesLetsUseMaths
             SortData();
         }
 
-
+        // sorts the data...
         private void SortData()
         {
             if (cfgData[0] != "DATA")
@@ -160,6 +163,7 @@ namespace ParachutesLetsUseMaths
 
         }
 
+        // refreshes data following save
         public void RefreshData(List<string> _cfgData)
         {
             cfgData = _cfgData;
@@ -176,7 +180,7 @@ namespace ParachutesLetsUseMaths
             GUIElements.PopulateLists();
         }
 
-
+        // sends the data
         public List<string> ReturnData(int index)
         {
             switch (index)
@@ -209,6 +213,7 @@ namespace ParachutesLetsUseMaths
 
         }
 
+        // saves the data
         public void SaveProfile(int index, string name, float grav, float aD, float c0, float c1, float c2, float c3, float c4)
         {
             customFileHandler = CustomFileHandler.Instance;
