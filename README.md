@@ -18,6 +18,9 @@ INSTRUCTIONS
   defined maximum, the velocity will display green and if it is over, it will display red. This is for quick reference.
 - By adding or removing chutes, you can change the calculated velocity to be whatever you feel necessary.
 
+- MAJOR UPDATE - you now have the option of defining, saving and loading custom profiles so that you can use PLUM for add on planets and parachutes. All options are available 
+  after clicking the options icon.
+
 
 NOTES
 
