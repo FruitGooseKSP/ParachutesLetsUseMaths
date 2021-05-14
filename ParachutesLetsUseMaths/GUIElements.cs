@@ -19,9 +19,33 @@ namespace ParachutesLetsUseMaths
         [KSPField(isPersistant = true)]
         public static int calcPick;
 
+        // the index of the custom option
+        [KSPField(isPersistant = true)]
+        public static int customFileSelection = 0;
+
+        // which chute we've selected
+        public static int chutePick = 0;
+
+        // this
+        public static GUIElements Instance;
+
+        // custom options
+        public static float customGravVal = 0.01f;
+        public static float customAirDensity = 1.22498f;
+        public static float customDragConstant = 482.427f;
+        public static string customName;
+        public string gravityCustom;
+        public static float chute0;
+        public static float chute1;
+        public static float chute2;
+        public static float chute3;
+        public static float chute4;
+
         // toolbar button textures
         public Texture btnTxtOn;
         public Texture btnTxtOff;
+        public Texture optionsTxt;
+        public Texture closeTxt;
 
         // the utilities class
         public PlumUtilities pUtils = new PlumUtilities();
@@ -44,10 +68,46 @@ namespace ParachutesLetsUseMaths
         //close button for the menu
         public static bool closeBtn;
 
+        // options save button
+        public static bool saveOptionsBtn;
+
+        // save status for save button
+        public static string saveStatus = "Saved";
+
+        // options close button
+        public static bool optCloseBtn;
+
+        // options button from menu
+        public static bool optionsBtn;
+
+        // have we pressed to show options
+        public static bool optionsPressed;
+
+        // range of buttons on the options menu
+        public static bool btnAdd1A;
+        public static bool btnMinus1A;
+        public static bool btnAdd1B;
+        public static bool btnMinus1B;
+        public static bool btnAdd1C;
+        public static bool btnMinus1C;
+        public static bool btnAdd1D;
+        public static bool btnMinus1D;
+        public static bool btnAdd1E;
+        public static bool btnMinus1E;
+        public static bool prevChute;
+        public static bool nextChute;
+        public static bool prevFile;
+        public static bool nextFile;
+
         // menu name holders
         public static Rect guiPos;
         public Vector2 menuPosition;
         public Vector2 menuSize;
+
+        // options name holders
+        public static Rect optPos;
+        public Vector2 optPosition;
+        public Vector2 optSize;
 
         // the bodies to pick from
         public static string[] bodies =
@@ -56,6 +116,7 @@ namespace ParachutesLetsUseMaths
             "Eve",
             "Duna",
             "Laythe",
+            "Custom",
         };
 
         // the velocities to chose from
@@ -74,6 +135,15 @@ namespace ParachutesLetsUseMaths
             "10",
         };
 
+        public static string[] chuteChoices =
+        {
+            "Mk16",
+            "Mk2r (Radial)",
+            "Mk16-XL",
+            "Mk25 (Drogue)",
+            "Mk12r (Drogue, Radial)",
+        };
+
         // custom GUIStyles
         public GUIStyle styleBtn;
         public GUIStyle styleLabel;
@@ -81,7 +151,24 @@ namespace ParachutesLetsUseMaths
         public GUIStyle styleLabel3;
         public GUIStyle styleToggle;
         public GUIStyle styleToggle2;
+        public GUIStyle styleToggle3;
         public GUIStyle styleBox;
+        public GUIStyle styleOptionBtn;
+        public GUIStyle styleTextField;
+
+        // custom file processor
+        public static CfgHandler cfgHandler;
+
+        // lists for each custom option
+        public List<string> custom1List = new List<string>();
+        public List<string> custom2List = new List<string>();
+        public List<string> custom3List = new List<string>();
+        public List<string> custom4List = new List<string>();
+        public List<string> custom5List = new List<string>();
+        public List<string> custom6List = new List<string>();
+        public List<string> custom7List = new List<string>();
+        public List<string> custom8List = new List<string>();
+        public List<string> custom9List = new List<string>();
 
 
         public void Start()
@@ -94,16 +181,30 @@ namespace ParachutesLetsUseMaths
                     plumBtn = null;
                 }
 
+                Instance = this;
+
                 // set the textures
                 btnTxtOff = GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/plumOn", false);
                 btnTxtOn = GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/plumOff", false);
+                optionsTxt = GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/plumOptions", false);
+                closeTxt = GameDatabase.Instance.GetTexture("FruitKocktail/PLUM/Icons/closeTexture", false);
 
                 // define the menu particulars
                 menuSize = new Vector2(800, 550);
                 menuPosition = new Vector2((Screen.width / 2) - (menuSize.x / 2), (Screen.height / 2) - (menuSize.y / 2));
                 guiPos = new Rect(menuPosition, menuSize);
+
+                // define options particulars
+                optSize = new Vector2(400, 550);
+                optPosition = new Vector2(menuPosition.x + menuSize.x, menuPosition.y);
+                optPos = new Rect(optPosition, optSize);
+
+                // set some defaults
                 btnIsPressed = false;
                 closeBtn = false;
+                optionsBtn = false;
+                gravityCustom = "";
+                calcPick = calcPick == 0 ? 8 : calcPick;
 
                 // instantiate the button
                 plumBtn = ApplicationLauncher.Instance.AddModApplication(onTrue, onFalse, onHover, onHoverOut, null, null,
@@ -111,48 +212,48 @@ namespace ParachutesLetsUseMaths
 
                 btnIsPresent = true;
 
-
-                if (calcPick == 0)
-                {
-                    calcPick = 8;
-                }
-
-
                 // define our custom styles
 
                 styleBtn = new GUIStyle(HighLogic.Skin.button);
-
                 styleLabel = new GUIStyle(HighLogic.Skin.label);
-
                 styleLabel2 = new GUIStyle(HighLogic.Skin.label)
                 {
                     margin = new RectOffset(50, 50, 25, 25),
                 };
-
                 styleLabel2.normal.textColor = Color.white;
-
                 styleLabel3 = new GUIStyle(HighLogic.Skin.label)
                 {
                     margin = new RectOffset(50, 50, 25, 25),
                     fontStyle = FontStyle.Bold,
                 };
-
                 styleToggle = new GUIStyle(HighLogic.Skin.toggle)
                 {
-                    margin = new RectOffset(150, 150, 25, 25),
+                    margin = new RectOffset(100, 100, 25, 25),
                     stretchWidth = true,
                 };
-
                 styleToggle2 = new GUIStyle(HighLogic.Skin.toggle)
                 {
                     margin = new RectOffset(250, 250, 25, 25),
                     stretchWidth = true,
                 };
-
+                styleToggle3 = new GUIStyle(HighLogic.Skin.toggle)
+                {
+                    margin = new RectOffset(100, 0, 25, 25),
+                    stretchWidth = true,
+                };
                 styleBox = new GUIStyle(HighLogic.Skin.box)
                 {
                     border = new RectOffset(25, 25, 25, 25),
                 };
+                styleOptionBtn = new GUIStyle(HighLogic.Skin.button);
+                styleTextField = new GUIStyle(HighLogic.Skin.textField)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                };
+
+                PopulateLists();
+
+
 
             }
             else
@@ -174,11 +275,192 @@ namespace ParachutesLetsUseMaths
             {
                 if (plumBtn != null)
                 {
+                    // if we press the close button on the menu
                     if (closeBtn)
                     {
                         plumBtn.SetFalse();
                         closeBtn = false;
                     }
+
+
+                    // if we press the options button and it's not shown
+                    if (optionsBtn && !optionsPressed)
+                    {
+                        optionsPressed = true;
+                        optionsBtn = false;
+                    }
+
+
+                    // if we close the options
+                    if ((optionsBtn && optionsPressed) || optCloseBtn)
+                    {
+                        optionsPressed = false;
+                        optionsBtn = false;
+                        optCloseBtn = false;
+                    }
+
+                    // show the options
+                    if (optionsPressed)
+                    {
+                        Vector2 newMenuPos = new Vector2(guiPos.x, guiPos.y);
+
+                        optPos.x = newMenuPos.x + menuSize.x;
+                        optPos.y = newMenuPos.y;
+
+                        // gravity buttons
+                        if (btnAdd1A)
+                        {
+                            customGravVal += 0.01f;
+                            customGravVal = float.Parse(Math.Round(double.Parse(customGravVal.ToString()), 2).ToString());
+                            btnAdd1A = false;
+                        }
+
+                        if (btnMinus1A)
+                        {
+                            if (customGravVal > 0.01f)
+                            {
+                                customGravVal -= 0.01f;
+                                customGravVal = float.Parse(Math.Round(double.Parse(customGravVal.ToString()), 2).ToString());
+                                btnMinus1A = false;
+                            }
+                            else
+                            {
+                                btnMinus1A = false;
+                            }
+                        }
+
+                        // air density buttons
+                        if (btnAdd1B || btnAdd1C)
+                        {
+                            customAirDensity += 0.00001f;
+                            customAirDensity = float.Parse(Math.Round(double.Parse(customAirDensity.ToString()), 5).ToString());
+                            btnAdd1B = false;
+                            btnAdd1C = false;
+                        }
+
+                        if (btnMinus1B || btnMinus1C)
+                        {
+                            if (customAirDensity > 0.00001f)
+                            {
+                                customAirDensity -= 0.00001f;
+                                customAirDensity = float.Parse(Math.Round(double.Parse(customAirDensity.ToString()), 5).ToString());
+                                btnMinus1B = false;
+                                btnMinus1C = false;
+                            }
+                            else
+                            {
+                                btnMinus1B = false;
+                                btnMinus1C = false;
+                            }
+                        }
+
+                        // drag constant buttons
+                        if (btnAdd1D || btnAdd1E)
+                        {
+                            customDragConstant += 0.001f;
+                            customDragConstant = float.Parse(Math.Round(double.Parse(customDragConstant.ToString()), 3).ToString());
+                            SetChuteNewVal();
+                            btnAdd1D = false;
+                            btnAdd1E = false;
+                        }
+
+                        if (btnMinus1D || btnMinus1E)
+                        {
+                            if (customDragConstant > 0.001f)
+                            {
+                                customDragConstant -= 0.001f;
+                                customDragConstant = float.Parse(Math.Round(double.Parse(customDragConstant.ToString()), 3).ToString());
+                                SetChuteNewVal();
+                                btnMinus1D = false;
+                                btnMinus1E = false;
+                            }
+                            else
+                            {
+                                btnMinus1D = false;
+                                btnMinus1E = false;
+                            }
+                        }
+
+
+                        // chute selection buttons
+                        if (prevChute)
+                        {
+                            prevChute = false;
+
+                            if (chutePick == 0)
+                            {
+                                chutePick = 4;
+                            }
+                            else
+                            {
+                                chutePick -= 1;
+                            }
+
+                            ChuteHandler();
+                        }
+
+                        if (nextChute)
+                        {
+                            nextChute = false;
+
+                            if (chutePick == 4)
+                            {
+                                chutePick = 0;
+                            }
+                            else
+                            {
+                                chutePick += 1;
+                            }
+
+                            ChuteHandler();
+                        }
+
+                        // custom file selection buttons
+                        if (prevFile)
+                        {
+                            prevFile = false;
+                            saveStatus = "Saved";
+
+                            if (customFileSelection != 0)
+                            {
+                                customFileSelection -= 1;
+                            }
+                            else
+                            {
+                                customFileSelection = 8;
+                            }
+
+                            PopulateTheOptions();
+                        }
+
+                        if (nextFile)
+                        {
+                            nextFile = false;
+                            saveStatus = "Saved";
+
+                            if (customFileSelection != 8)
+                            {
+                                customFileSelection += 1;
+                            }
+                            else
+                            {
+                                customFileSelection = 0;
+                            }
+
+                            PopulateTheOptions();
+                        }
+
+                        // save button
+                        if (saveOptionsBtn)
+                        {
+                            saveOptionsBtn = false;
+                            cfgHandler.SaveProfile(customFileSelection, customName, customGravVal, customAirDensity, chute0, chute1, chute2, chute3, chute4);
+                            saveStatus = "Saved";
+
+                        }
+
+                    }
+
                 }
             }
             else
@@ -191,6 +473,26 @@ namespace ParachutesLetsUseMaths
                 }
             }
         }
+
+        // add data from file to lists for quick access
+        public static void PopulateLists()
+        {
+
+            cfgHandler = CfgHandler.Instance;
+            Instance.custom1List = cfgHandler.ReturnData(0);
+            Instance.custom2List = cfgHandler.ReturnData(1);
+            Instance.custom3List = cfgHandler.ReturnData(2);
+            Instance.custom4List = cfgHandler.ReturnData(3);
+            Instance.custom5List = cfgHandler.ReturnData(4);
+            Instance.custom6List = cfgHandler.ReturnData(5);
+            Instance.custom7List = cfgHandler.ReturnData(6);
+            Instance.custom8List = cfgHandler.ReturnData(7);
+            Instance.custom9List = cfgHandler.ReturnData(8);
+
+            Instance.PopulateTheOptions();
+        }
+
+
 
         // Gets the amount of chutes currently on our vessel
         public string GetParachuteQty()
@@ -289,7 +591,8 @@ namespace ParachutesLetsUseMaths
                                     break;
                             }
 
-                            runningTotal = pUtils.BCodeBase(celPick, paraCode);
+                            runningTotal = celPick != 4 ? pUtils.BCodeBase(celPick, paraCode) : pUtils.GetSingleCustomB(paraCode);
+                            
                         }
                     }
 
@@ -400,27 +703,31 @@ namespace ParachutesLetsUseMaths
         // GUI Menu Window
         public void MenuWindow(int WindowID)
         {
+
             GUI.BeginGroup(new Rect(0, 0, menuSize.x, menuSize.y));
 
             GUI.Box(new Rect(0, 0, menuSize.x, menuSize.y), GUIContent.none);
 
+            closeBtn = GUI.Button(new Rect(menuSize.x - 35, 0, 35, 35), closeTxt, styleBtn);
+            optionsBtn = GUI.Button(new Rect(menuSize.x - 70, 0, 35, 35), optionsTxt, styleOptionBtn);
+
             GUI.Label(new Rect(50, 35, menuSize.x - 100, 25), "Select Celestial Body:", styleLabel);
-            celPick = GUI.SelectionGrid(new Rect(50, 70, menuSize.x - 100, 25), celPick, bodies, 4, styleToggle);
+            celPick = GUI.SelectionGrid(new Rect(50, 70, menuSize.x - 100, 25), celPick, bodies, 5, styleToggle);
 
             GUI.Label(new Rect(50, 125, menuSize.x - 100, 25), "Choose Maximum Velocity: " + calcPick + " m/s", styleLabel);
             calcPick = (int)GUI.HorizontalSlider(new Rect(50, 170, menuSize.x - 100, 25), calcPick, 0, 10, new GUIStyle(HighLogic.Skin.horizontalSlider),
                 new GUIStyle(HighLogic.Skin.horizontalSliderThumb));
 
             GUI.Label(new Rect(50, 225, menuSize.x - 100, 25), "Calculations", styleLabel);
-            GUI.Box(new Rect(50, 250, menuSize.x - 100, 200), GUIContent.none, styleBox);
+            GUI.Box(new Rect(50, 250, menuSize.x - 100, 225), GUIContent.none, styleBox);
             GUI.Label(new Rect(75, 275, menuSize.x - 150, 25), "Parachute Quantity = " + GetParachuteQty(), styleLabel2);
             GUI.Label(new Rect(75, 300, menuSize.x - 150, 25), "Vessel (Wet) Mass, Kg = " + GetVesselMass(), styleLabel2);
-            GUI.Label(new Rect(75, 325, menuSize.x - 150, 25), "Atomospheric Pressure, kPa = " + GetATD(), styleLabel2);
+            GUI.Label(new Rect(75, 325, menuSize.x - 150, 25), "Planetary Profile = " + GetPlanetProfile(), styleLabel2);
             GUI.Label(new Rect(75, 350, menuSize.x - 150, 25), "Surface Gravity, m/s2 = " + GetSurfaceGravity(), styleLabel2);
-            GUI.Label(new Rect(75, 375, menuSize.x - 150, 25), "Parachute Magnitude Factor, bPmf = " + GetBValue(), styleLabel2);
-            GUI.Label(new Rect(75, 400, menuSize.x - 150, 25), "Approximate Touchdown Velocity, m/s = " + GetTDVelocity(), styleLabel3);
+            GUI.Label(new Rect(75, 375, menuSize.x - 150, 25), "Air Density, Kg/m3 = " + GetATD(), styleLabel2);
+            GUI.Label(new Rect(75, 400, menuSize.x - 150, 25), "Parachute Magnitude Factor, bPmf = " + GetBValue(), styleLabel2);
+            GUI.Label(new Rect(75, 425, menuSize.x - 150, 25), "Approximate Touchdown Velocity, m/s = " + GetTDVelocity(), styleLabel3);
 
-            closeBtn = GUI.Button(new Rect(menuSize.x - 150, menuSize.y - 75, 100, 50), "Close", styleBtn);
 
             GUI.DragWindow();
 
@@ -428,11 +735,94 @@ namespace ParachutesLetsUseMaths
 
         }
 
+        // GUI options window
+        public void OptionsWindow(int _windowID)
+        {
+            GUI.BeginGroup(new Rect(0, 0, optSize.x, optSize.y));
+
+            GUI.SetNextControlName("abc");
+            GUI.Box(new Rect(0, 0, optSize.x, optSize.y), GUIContent.none);
+
+            prevFile = GUI.Button(new Rect(50, 35, 50, 25), "<", styleBtn);
+            nextFile = GUI.Button(new Rect(optSize.x - 100, 35, 50, 25), ">", styleBtn);
+
+            GUI.SetNextControlName("customNamePanel");
+            customName = GUI.TextField(new Rect(100, 35, optSize.x - 200, 35), customName, styleTextField);
+
+            if ((Event.current.isKey && (Event.current.keyCode == KeyCode.KeypadEnter || Event.current.keyCode == KeyCode.Return)
+                && GUI.GetNameOfFocusedControl() == "customNamePanel"))
+            {
+                GUI.FocusControl("abc");
+                saveStatus = "UNSAVED*";
+            }
+
+            GUI.Label(new Rect(50, 80, optSize.x - 100, 25), "Surface Gravity, m/s2 = " + customGravVal, styleLabel);
+
+            customGravVal = GUI.HorizontalSlider(new Rect(50, 115, optSize.x - 100, 25), customGravVal, 0, 30, new GUIStyle(HighLogic.Skin.horizontalSlider),
+                    new GUIStyle(HighLogic.Skin.horizontalSliderThumb));
+
+            if (GUI.changed)
+            {
+                customGravVal = float.Parse(Math.Round(double.Parse(customGravVal.ToString()), 2).ToString());
+                saveStatus = "UNSAVED*";
+            }
+
+            btnMinus1A = GUI.Button(new Rect(50, 140, (optSize.x - 100) / 2, 25), "- 0.01");
+            btnAdd1A = GUI.Button(new Rect(((optSize.x - 100) / 2) + 50, 140, (optSize.x - 100) / 2, 25), "+ 0.01");
+
+
+            GUI.Label(new Rect(50, 185, optSize.x - 100, 25), "Air Density, kg/m3 = " + customAirDensity, styleLabel);
+
+            customAirDensity = GUI.HorizontalSlider(new Rect(50, 220, optSize.x - 100, 25), customAirDensity, 0, 10, new GUIStyle(HighLogic.Skin.horizontalSlider),
+                    new GUIStyle(HighLogic.Skin.horizontalSliderThumb));
+
+            if (GUI.changed)
+            {
+                customAirDensity = float.Parse(Math.Round(double.Parse(customAirDensity.ToString()), 5).ToString());
+                saveStatus = "UNSAVED*";
+            }
+
+            btnMinus1B = GUI.RepeatButton(new Rect(50, 245, (optSize.x - 100) / 4, 25), "- Hold");
+            btnMinus1C = GUI.Button(new Rect(((optSize.x - 100) / 4) + 50, 245, (optSize.x - 100) / 4, 25), "- Single");
+            btnAdd1B = GUI.Button(new Rect((((optSize.x - 100) / 4) * 2) + 50, 245, (optSize.x - 100) / 4, 25), "+ Single");
+            btnAdd1C = GUI.RepeatButton(new Rect((((optSize.x - 100) / 4) * 3) + 50, 245, (optSize.x - 100) / 4, 25), "+ Hold");
+
+            GUI.Label(new Rect(50, 290, optSize.x - 100, 25), "Select Parachute: ", styleLabel);
+            prevChute = GUI.Button(new Rect(50, 315, (optSize.x - 100) / 2, 25), "Previous Chute");
+            nextChute = GUI.Button(new Rect(((optSize.x - 100) / 2) + 50, 315, (optSize.x - 100) / 2, 25), "Next Chute");
+
+            GUI.Label(new Rect(50, 355, optSize.x - 100, 25), "Parachute = " + chuteChoices[chutePick], styleLabel);
+            GUI.Label(new Rect(50, 380, optSize.x - 100, 25), "Stock Drag Constant (Kerbin), Cd = " + pUtils.FetchDragDefault(chutePick), styleLabel);
+            GUI.Label(new Rect(50, 405, optSize.x - 100, 25), "Custom Drag Constant, Cd = " + customDragConstant, styleLabel);
+
+            customDragConstant = GUI.HorizontalSlider(new Rect(50, 440, optSize.x - 100, 25), customDragConstant, 0, 1000, new GUIStyle(HighLogic.Skin.horizontalSlider),
+                    new GUIStyle(HighLogic.Skin.horizontalSliderThumb));
+
+            if (GUI.changed)
+            {
+                customDragConstant = float.Parse(Math.Round(double.Parse(customDragConstant.ToString()), 3).ToString());
+                SetChuteNewVal();
+                saveStatus = "UNSAVED*";
+            }
+
+            btnMinus1D = GUI.RepeatButton(new Rect(50, 465, (optSize.x - 100) / 4, 25), "- Hold");
+            btnMinus1E = GUI.Button(new Rect(((optSize.x - 100) / 4) + 50, 465, (optSize.x - 100) / 4, 25), "- Single");
+            btnAdd1D = GUI.Button(new Rect((((optSize.x - 100) / 4) * 2) + 50, 465, (optSize.x - 100) / 4, 25), "+ Single");
+            btnAdd1E = GUI.RepeatButton(new Rect((((optSize.x - 100) / 4) * 3) + 50, 465, (optSize.x - 100) / 4, 25), "+ Hold");
+
+            saveOptionsBtn = GUI.Button(new Rect(50, 500, (optSize.x - 100) / 2, 40), saveStatus, styleBtn);
+            optCloseBtn = GUI.Button(new Rect(((optSize.x - 100) / 2) + 50, 500, (optSize.x - 100) / 2, 40), "Close", styleBtn);
+
+            GUI.DragWindow();
+
+            GUI.EndGroup();
+        }
+
         // show the menu
         public void ItsPlumTime()
         {
             guiPos = GUI.Window(123458, guiPos, MenuWindow,
-               "Parachute Information", new GUIStyle(HighLogic.Skin.window));
+               "Parachutes? Let's Use Maths!", new GUIStyle(HighLogic.Skin.window));
 
             plumBtn.SetTrue();
             btnIsPresent = true;
@@ -444,6 +834,12 @@ namespace ParachutesLetsUseMaths
             else plumBtn.SetFalse();
         }
 
+        // show the options
+        public void ShowOptionsWindow()
+        {
+            optPos = optionsPressed ? GUI.Window(123459, optPos, OptionsWindow, "Custom Options",
+            new GUIStyle(HighLogic.Skin.window)) : new Rect(optPosition, optSize);
+        }
 
         // onGUI
         public void OnGUI()
@@ -452,6 +848,11 @@ namespace ParachutesLetsUseMaths
             {
                 ItsPlumTime();
             }
+            if (btnIsPressed && optionsPressed)
+            {
+                ShowOptionsWindow();
+            }
+
         }
 
 
@@ -500,8 +901,191 @@ namespace ParachutesLetsUseMaths
 
         }
 
+        // set the custom options from file according to index
+        public void PopulateTheOptions()
+        {
+            List<string> opList = new List<string>();
+
+            switch (customFileSelection)
+            {
+                case 0:
+                    opList = custom1List;
+                    break;
+                case 1:
+                    opList = custom2List;
+                    break;
+                case 2:
+                    opList = custom3List;
+                    break;
+                case 3:
+                    opList = custom4List;
+                    break;
+                case 4:
+                    opList = custom5List;
+                    break;
+                case 5:
+                    opList = custom6List;
+                    break;
+                case 6:
+                    opList = custom7List;
+                    break;
+                case 7:
+                    opList = custom8List;
+                    break;
+                case 8:
+                    opList = custom9List;
+                    break;
+                default:
+                    opList = null;
+                    break;
+            }
+
+            if (opList == null)
+            {
+                Debug.LogError("ERROR - PLUM : unable to determine pop list!");
+            }
+
+            customName = opList[1];
+            customGravVal = float.Parse(opList[2]);
+            customAirDensity = float.Parse(opList[3]);
+            chute0 = float.Parse(opList[4]);
+            chute1 = float.Parse(opList[5]);
+            chute2 = float.Parse(opList[6]);
+            chute3 = float.Parse(opList[7]);
+            chute4 = float.Parse(opList[8]);
+
+            switch (chutePick)
+            {
+                case 0:
+                    customDragConstant = chute0;
+                    break;
+                case 1:
+                    customDragConstant = chute1;
+                    break;
+                case 2:
+                    customDragConstant = chute2;
+                    break;
+                case 3:
+                    customDragConstant = chute3;
+                    break;
+                case 4:
+                    customDragConstant = chute4;
+                    break;
+                default:
+                    Debug.LogError("ERROR : PLUM - unable to assign Custom Drag Profile!");
+                    break;
+            }
 
 
+        }
+
+        // as above but for chutes as they have another layer of data
+        public void ChuteHandler()
+        {
+            List<string> opList = new List<string>();
+
+            switch (customFileSelection)
+            {
+                case 0:
+                    opList = custom1List;
+                    break;
+                case 1:
+                    opList = custom2List;
+                    break;
+                case 2:
+                    opList = custom3List;
+                    break;
+                case 3:
+                    opList = custom4List;
+                    break;
+                case 4:
+                    opList = custom5List;
+                    break;
+                case 5:
+                    opList = custom6List;
+                    break;
+                case 6:
+                    opList = custom7List;
+                    break;
+                case 7:
+                    opList = custom8List;
+                    break;
+                case 8:
+                    opList = custom9List;
+                    break;
+                default:
+                    opList = null;
+                    break;
+            }
+
+            if (opList == null)
+            {
+                Debug.LogError("ERROR - PLUM : unable to determine custom chute param list!");
+            }
+
+            chute0 = float.Parse(opList[4]);
+            chute1 = float.Parse(opList[5]);
+            chute2 = float.Parse(opList[6]);
+            chute3 = float.Parse(opList[7]);
+            chute4 = float.Parse(opList[8]);
+
+            switch (chutePick)
+            {
+                case 0:
+                    customDragConstant = chute0;
+                    break;
+                case 1:
+                    customDragConstant = chute1;
+                    break;
+                case 2:
+                    customDragConstant = chute2;
+                    break;
+                case 3:
+                    customDragConstant = chute3;
+                    break;
+                case 4:
+                    customDragConstant = chute4;
+                    break;
+                default:
+                    Debug.LogError("ERROR : PLUM - unable to assign Local Custom Chute Drag Profile!");
+                    break;
+            }
+
+        }
+
+        // gets profile message
+        public static string GetPlanetProfile()
+        {
+            return celPick != 4 ? bodies[celPick] : "Custom Profile (" + customName + ")";
+        }
+
+        // allows live update of chute value/touch down velocity
+        public static void SetChuteNewVal()
+        {
+            switch (chutePick)
+            {
+                case 0:
+                    chute0 = customDragConstant;
+                    break;
+                case 1:
+                    chute1 = customDragConstant;
+                    break;
+                case 2:
+                    chute2 = customDragConstant;
+                    break;
+                case 3:
+                    chute3 = customDragConstant;
+                    break;
+                case 4:
+                    chute4 = customDragConstant;
+                    break;
+                default:
+                    break;
+            }
+
+
+
+        }
 
 
     }

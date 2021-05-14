@@ -73,6 +73,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CfgHandler.cs" />
+    <Compile Include="CustomFileHandler.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GUIElements.cs" />
     <Compile Include="PLUM.cs" />
     <Compile Include="PlumUtilities.cs" />
@@ -82,6 +85,10 @@
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\codecracker.CSharp.1.1.0\analyzers\dotnet\cs\CodeCracker.CSharp.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
