@@ -723,8 +723,8 @@ namespace ParachutesLetsUseMaths
             GUI.Label(new Rect(75, 275, menuSize.x - 150, 25), "Parachute Quantity = " + GetParachuteQty(), styleLabel2);
             GUI.Label(new Rect(75, 300, menuSize.x - 150, 25), "Vessel (Wet) Mass, Kg = " + GetVesselMass(), styleLabel2);
             GUI.Label(new Rect(75, 325, menuSize.x - 150, 25), "Planetary Profile = " + GetPlanetProfile(), styleLabel2);
-            GUI.Label(new Rect(75, 350, menuSize.x - 150, 25), "Air Density, Kg/m3 = " + GetATD(), styleLabel2);
-            GUI.Label(new Rect(75, 375, menuSize.x - 150, 25), "Surface Gravity, m/s2 = " + GetSurfaceGravity(), styleLabel2);
+            GUI.Label(new Rect(75, 350, menuSize.x - 150, 25), "Surface Gravity, m/s2 = " + GetSurfaceGravity(), styleLabel2);
+            GUI.Label(new Rect(75, 375, menuSize.x - 150, 25), "Air Density, Kg/m3 = " + GetATD(), styleLabel2);
             GUI.Label(new Rect(75, 400, menuSize.x - 150, 25), "Parachute Magnitude Factor, bPmf = " + GetBValue(), styleLabel2);
             GUI.Label(new Rect(75, 425, menuSize.x - 150, 25), "Approximate Touchdown Velocity, m/s = " + GetTDVelocity(), styleLabel3);
 
